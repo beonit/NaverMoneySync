@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TabHost xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@android:id/tabhost" android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	<LinearLayout android:orientation="vertical"
+		android:layout_width="fill_parent" android:layout_height="fill_parent">
+		<TabWidget android:id="@android:id/tabs"
+			android:layout_width="fill_parent" android:layout_height="wrap_content" />
+		<FrameLayout android:id="@android:id/tabcontent"
+			android:layout_width="fill_parent" android:layout_height="fill_parent">
+
+			<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+				android:id="@+id/viewRecord" android:layout_height="fill_parent"
+				android:layout_width="fill_parent">
+				<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					android:orientation="vertical"
+					android:layout_width="fill_parent" android:layout_height="fill_parent"
+					android:theme="@android:style/Theme.Translucent">
+					<TextView android:text="현금 사용 기록" android:id="@+id/TextViewRecord"
+						android:layout_width="fill_parent" android:layout_height="wrap_content"
+						android:textSize="30dp" android:layout_marginTop="15dp"
+						android:layout_marginBottom="15dp" android:gravity="center"></TextView>
+					<Button android:layout_width="match_parent"
+						android:layout_height="wrap_content" android:id="@+id/EditTextRecordDate"
+						android:text="날짜" android:layout_marginLeft="15dp"
+						android:layout_marginRight="15dp" android:layout_marginBottom="15dp"
+						android:onClick="onButtonDatePick"></Button>
+					<EditText android:layout_width="match_parent"
+						android:layout_height="wrap_content" android:id="@+id/EditTextRecordContents"
+						android:hint="사용내역" android:layout_marginLeft="15dp"
+						android:layout_marginRight="15dp"></EditText>
+					<EditText android:layout_width="match_parent"
+						android:layout_height="wrap_content" android:id="@+id/EditTextRecordMoney"
+						android:hint="금액(원)" android:layout_marginLeft="15dp" android:inputType="number"
+						android:layout_marginRight="15dp" android:layout_marginTop="15dp"></EditText>
+					<Button android:id="@+id/ButtonAccount"
+						android:layout_width="match_parent" android:layout_height="wrap_content"
+						android:text="완료" android:layout_marginLeft="15dp"
+						android:layout_marginRight="15dp" android:layout_marginTop="15dp"
+						android:textSize="13dp" android:onClick="onSubmitRecord"></Button>
+				</LinearLayout>
+			</ScrollView>
+
+			<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+				android:id="@+id/viewAccount" android:layout_height="fill_parent"
+				android:layout_width="fill_parent">
+				<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					android:orientation="vertical"
+					android:layout_width="fill_parent" android:layout_height="fill_parent"
+					android:theme="@android:style/Theme.Translucent">
+
+					<TextView android:text="네이버 계정 정보 입력" android:id="@+id/TextViewAccount"
+						android:layout_width="fill_parent" android:layout_height="wrap_content"
+						android:textSize="30dp" android:layout_marginTop="15dp"
+						android:layout_marginBottom="15dp" android:gravity="center"></TextView>
+					<EditText android:layout_width="match_parent"
+						android:layout_height="wrap_content" android:id="@+id/EditTextAccount"
+						android:hint="아이디" android:layout_marginLeft="15dp"
+						android:layout_marginRight="15dp"></EditText>
+					<EditText android:layout_width="match_parent"
+						android:layout_height="wrap_content" android:id="@+id/EditTextPasswd"
+						android:hint="비밀번호" android:password="true"
+						android:layout_marginLeft="15dp" android:layout_marginRight="15dp"
+						android:layout_marginTop="15dp"></EditText>
+					<Button android:id="@+id/ButtonAccount"
+						android:layout_width="match_parent" android:layout_height="wrap_content"
+						android:text="완료" android:layout_marginLeft="15dp"
+						android:layout_marginRight="15dp" android:layout_marginTop="15dp"
+						android:textSize="13dp" android:onClick="onSubmitAccount"></Button>
+				</LinearLayout>
+			</ScrollView>
+
+		</FrameLayout>
+	</LinearLayout>
+</TabHost>
