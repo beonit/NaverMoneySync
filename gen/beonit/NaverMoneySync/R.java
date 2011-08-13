@@ -29,6 +29,8 @@ public final class R {
         public static final int beonitBlog=0x7f050006;
         public static final int beonitEmail=0x7f050005;
         public static final int beonitGithub=0x7f050007;
+        public static final int naverView=0x7f050012;
+        public static final int viewNaver=0x7f050011;
         public static final int viewRecord=0x7f050008;
         public static final int viewRewrite=0x7f05000d;
     }

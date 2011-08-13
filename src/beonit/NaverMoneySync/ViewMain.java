@@ -21,13 +21,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TabHost;
+import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TextView;
 
-public class ViewMain extends TabActivity {
+public class ViewMain extends TabActivity implements OnTabChangeListener {
     /** Called when the activity is first created. */
 	
 	final static int NOTI_ID = 1159;
@@ -45,18 +47,35 @@ public class ViewMain extends TabActivity {
         		.setContent(R.id.viewRecord)
         		);
         mTabHost.addTab(mTabHost.newTabSpec("tab_test3")
+        		.setIndicator("가계부 조회")
+        		.setContent(R.id.viewNaver)
+        		);
+        mTabHost.addTab(mTabHost.newTabSpec("tab_test2")
         		.setIndicator("재전송")
         		.setContent(R.id.viewRewrite)
         		);
+        mTabHost.setOnTabChangedListener(this);
+        
+        for ( int tab = 0; tab < mTabHost.getTabWidget().getChildCount(); ++tab )
+        {
+        	mTabHost.getTabWidget().getChildAt(tab).getLayoutParams().height = 30;
+        }	
         
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND,
                 WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
         
+        // rewrite setup
         SharedPreferences prefs = getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
         updateRewriteView(prefs);
         
-        Button recordDate = (Button)findViewById(R.id.EditTextRecordDate);
+        // webview setting
+        WebView wb = (WebView)findViewById(R.id.naverView);
+        wb.setWillNotDraw( true );
+        wb.setWebViewClient( new NaverViewClient(prefs.getString("naverID", null), prefs.getString("naverPasswd", null) ) );
+        wb.getSettings().setJavaScriptEnabled(true);
+        
         // get the current date
+        Button recordDate = (Button)findViewById(R.id.EditTextRecordDate);
         final Calendar c = Calendar.getInstance();
         mYear = c.get(Calendar.YEAR);
         mMonth = c.get(Calendar.MONTH);
@@ -69,20 +88,20 @@ public class ViewMain extends TabActivity {
                     .append(mDay).append("일")
                     );
 
-    	// 계정 정보가 없다.
+    	// 계정 정보가 없으면 계정 정보 액티비티 실행
 		String id = prefs.getString("naverID", null);
 		String passwd = prefs.getString("naverPasswd", null);
 		if( id == null || passwd == null || id.length() == 0 || passwd.length() == 0 ){
 			Intent intent = new Intent(this, AccountSetting.class);
         	startActivity(intent);
 		}
-    }
+	}		
 	
 	public static final int MENU_ACCOUNT_SETTING = 1;
 	public static final int MENU_ABOUT = 2;
 	public boolean onCreateOptionsMenu (Menu menu){
 		menu.add(0, MENU_ACCOUNT_SETTING, 1, "naver 계정 설정");
-		menu.add(0, MENU_ABOUT, 1, "about");
+		menu.add(0, MENU_ABOUT, 1, "프로그램에 대하여");
 		return true;
 	}
 	
@@ -368,9 +387,32 @@ public class ViewMain extends TabActivity {
                     );
     }
 
+    @Override
+    public void onTabChanged(String tabId) {
+    	if( tabId.equals("tab_test3") ){
+        	if( checkNetwork() == false ){
+        		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+    			alert.setTitle( "통신 불가능" );
+    			alert.setMessage( "DB에 저장됩니다." );
+    			alert.setPositiveButton(
+    					 "닫기", new DialogInterface.OnClickListener() {
+    					    public void onClick( DialogInterface dialog, int which) {
+    					        dialog.dismiss();   //닫기
+    					    }
+    					});
+    			alert.show();
+    			return;
+        	}
+        	WebView wb = (WebView)findViewById(R.id.naverView);
+    		if( wb.willNotDraw() ){
+    			wb.loadUrl("https://nid.naver.com/nidlogin.login?svctype=262144&url=http://beta.moneybook.naver.com/m/view.nhn?method=monthly");
+    		}
+    	}
+   	    	
+    }
+    
     private DatePickerDialog.OnDateSetListener mDateSetListener =
             new DatePickerDialog.OnDateSetListener() {
-
                 public void onDateSet(DatePicker view, int year, 
                                       int monthOfYear, int dayOfMonth) {
                     mYear = year;

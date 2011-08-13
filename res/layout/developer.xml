@@ -12,6 +12,10 @@
 						android:layout_width="fill_parent" android:layout_height="wrap_content"
 						android:textSize="20dp" android:layout_marginTop="15dp"
 						android:layout_marginBottom="15dp" android:gravity="center"></TextView>
+	<TextView android:text="개발자"
+						android:layout_width="fill_parent" android:layout_height="wrap_content"
+						android:textSize="15dp" android:layout_marginTop="5dp" 
+						android:gravity="center"></TextView>
 	<TextView android:text="beonit" android:id="@+id/beonit"
 						android:layout_width="fill_parent" android:layout_height="wrap_content"
 						android:textSize="15dp" android:layout_marginTop="5dp" 
