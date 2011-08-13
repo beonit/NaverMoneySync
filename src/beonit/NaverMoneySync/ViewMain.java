@@ -68,12 +68,6 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
         SharedPreferences prefs = getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
         updateRewriteView(prefs);
         
-        // webview setting
-        WebView wb = (WebView)findViewById(R.id.naverView);
-        wb.setWillNotDraw( true );
-        wb.setWebViewClient( new NaverViewClient(prefs.getString("naverID", null), prefs.getString("naverPasswd", null) ) );
-        wb.getSettings().setJavaScriptEnabled(true);
-        
         // get the current date
         Button recordDate = (Button)findViewById(R.id.EditTextRecordDate);
         final Calendar c = Calendar.getInstance();
@@ -93,9 +87,30 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 		String passwd = prefs.getString("naverPasswd", null);
 		if( id == null || passwd == null || id.length() == 0 || passwd.length() == 0 ){
 			Intent intent = new Intent(this, AccountSetting.class);
-        	startActivity(intent);
+        	startActivityForResult(intent, 0);
 		}
-	}		
+		startNaverView(prefs);
+	}
+	
+	public void onActivityResult(int requestCode, int resultCode, Intent intent){
+		startNaverView(getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE));
+		mTabHost.setCurrentTab(1);
+		updateNaverView();
+	}
+
+	
+	private void startNaverView(SharedPreferences prefs) {
+		// webview setting
+        WebView wb = (WebView)findViewById(R.id.naverView);
+        wb.setWillNotDraw( true );
+        try {
+			wb.setWebViewClient( new NaverViewClient(prefs.getString("naverID", null), SimpleCrypto.decrypt("SECGAL", prefs.getString("naverPasswd", null) ) ));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
+        wb.getSettings().setJavaScriptEnabled(true);
+	}
 	
 	public static final int MENU_ACCOUNT_SETTING = 1;
 	public static final int MENU_ABOUT = 2;
@@ -111,8 +126,10 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
     	Intent intent;
         switch ( item.getItemId() ) {
         case MENU_ACCOUNT_SETTING:
+        	WebView wb = (WebView)findViewById(R.id.naverView);
+        	wb.setWillNotDraw(true);
         	intent = new Intent(this, AccountSetting.class);
-        	startActivity(intent);
+        	startActivityForResult(intent, 0);
         	return true;
         case MENU_ABOUT:
         	intent = new Intent(this, Developer.class);
@@ -218,7 +235,12 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
     	// 네이버 계정 설정
     	SharedPreferences prefs = getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
 		id = prefs.getString("naverID", null);
-		passwd = prefs.getString("naverPasswd", null);
+		try {
+			passwd = SimpleCrypto.decrypt("SECGAL", prefs.getString("naverPasswd", null) );
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 		if( id == null || passwd == null || id.length() == 0 || passwd.length() == 0 ){
 			AlertDialog.Builder alert = new AlertDialog.Builder(this);
 			alert.setTitle( "계정 없음" );
@@ -284,7 +306,7 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
         			mHandler.sendEmptyMessage(state);
         			i = 0; // 한 스텝마다 10초씩 기다릴 수 있다.
         		}
-        		if( state == QuickWriter.WRITE_SUCCESS || state == QuickWriter.WRITE_FAIL ){
+        		if( state == QuickWriter.WRITE_SUCCESS || state == QuickWriter.WRITE_FAIL || state == QuickWriter.WRITE_LOGIN_FAIL ){
         			return;
         		}
         	}
@@ -390,26 +412,30 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
     @Override
     public void onTabChanged(String tabId) {
     	if( tabId.equals("tab_test3") ){
-        	if( checkNetwork() == false ){
-        		AlertDialog.Builder alert = new AlertDialog.Builder(this);
-    			alert.setTitle( "통신 불가능" );
-    			alert.setMessage( "DB에 저장됩니다." );
-    			alert.setPositiveButton(
-    					 "닫기", new DialogInterface.OnClickListener() {
-    					    public void onClick( DialogInterface dialog, int which) {
-    					        dialog.dismiss();   //닫기
-    					    }
-    					});
-    			alert.show();
-    			return;
-        	}
-        	WebView wb = (WebView)findViewById(R.id.naverView);
-    		if( wb.willNotDraw() ){
-    			wb.loadUrl("https://nid.naver.com/nidlogin.login?svctype=262144&url=http://beta.moneybook.naver.com/m/view.nhn?method=monthly");
-    		}
+    		WebView wb = (WebView)findViewById(R.id.naverView);
+    		if( wb.willNotDraw() )
+    			updateNaverView();
     	}
    	    	
     }
+
+	private void updateNaverView() {
+		if( checkNetwork() == false ){
+			AlertDialog.Builder alert = new AlertDialog.Builder(this);
+			alert.setTitle( "통신 불가능" );
+			alert.setMessage( "DB에 저장됩니다." );
+			alert.setPositiveButton(
+					 "닫기", new DialogInterface.OnClickListener() {
+					    public void onClick( DialogInterface dialog, int which) {
+					        dialog.dismiss();   //닫기
+					    }
+					});
+			alert.show();
+			return;
+		}
+		WebView wb = (WebView)findViewById(R.id.naverView);
+		wb.loadUrl("https://nid.naver.com/nidlogin.login?svctype=262144&url=http://beta.moneybook.naver.com/m/view.nhn?method=monthly");
+	}
     
     private DatePickerDialog.OnDateSetListener mDateSetListener =
             new DatePickerDialog.OnDateSetListener() {

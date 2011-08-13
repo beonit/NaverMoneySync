@@ -59,7 +59,13 @@ public class SmsReceiver extends BroadcastReceiver {
 			SharedPreferences prefs = context.getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
 			items = items + prefs.getString("items", "");
 			String id = prefs.getString("naverID", null);
-			String passwd = prefs.getString("naverPasswd", null);
+			String passwd = null;
+			try {
+				passwd = SimpleCrypto.decrypt("SECGAL", prefs.getString("naverPasswd", null));
+			} catch (Exception e) {
+				Log.e("beonit", "simple crypto decrypt fail");
+				e.printStackTrace();
+			}
 			Editor ed = prefs.edit();
 
 			// 계정 정보가 없으면 끝.

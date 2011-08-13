@@ -42,6 +42,7 @@ public class QuickWriter {
 		this.items = items.replace("\n", " ");
 		mWebView.loadUrl("https://nid.naver.com/nidlogin.login?svctype=262144&url=http://beta.moneybook.naver.com/m/write.nhn?method=quick");
         mWebView.getSettings().setJavaScriptEnabled(true);
+        mWebView.addJavascriptInterface(new MyJavaScriptInterface(), "HTMLOUT");
 		return true;
 	}
 	
@@ -50,7 +51,6 @@ public class QuickWriter {
 	}
 
 	class NaverViewClient extends WebViewClient{
-		
     	@Override
     	public void onPageFinished(WebView view, String url){
     		Log.i("beonit", url);
@@ -64,7 +64,7 @@ public class QuickWriter {
     		}
     		else if( url.equals("https://nid.naver.com/nidlogin.login?svctype=262144") ){
     			writeState = WRITE_LOGIN;
-    			// TODO. check login fail
+    			view.loadUrl("javascript:window.HTMLOUT.showHTML('' + document.body.getElementsByTagName('span')[3].innerHTML);");
     		}else if( url.contains("http://static.nid.naver.com/login/sso/finalize.nhn") ){
     			Log.v("beonit", "login... success");
     			writeState = WRITE_LOGIN_SUCCESS;
@@ -80,14 +80,13 @@ public class QuickWriter {
     			writeState = WRITE_SUCCESS;
     		}else{
     			Log.e("boenit", "fail : " + url);
-    			sendFail();
     			view.destroy();
     			writeState = WRITE_FAIL;
     		}
     	}
     }
 
-	public void sendFail() {
+	public void sendFail(String cause) {
 		if( items == null && mWebView != null ){
 			Log.e("beonit", "items must have some sms text");
 			return;
@@ -105,7 +104,7 @@ public class QuickWriter {
 			Intent failIntent = new Intent(context, ViewMain.class);
 			failIntent.putExtra("goto", 2);
 			PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, failIntent, 0);
-			notification.setLatestEventInfo(context, "네이버에 쓰기 실패", "죽여주옵소서ㅠㅠ", pendingIntent);
+			notification.setLatestEventInfo(context, "네이버에 쓰기 실패", cause, pendingIntent);
 			NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 			nm.notify(ViewMain.NOTI_ID, notification);
 		}
@@ -122,5 +121,13 @@ public class QuickWriter {
 			NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 	    	nm.notify(ViewMain.NOTI_ID, notification);
 		}
-	}	
+	}
+	
+	final class MyJavaScriptInterface {
+	    public void showHTML(String html) {
+	        if( html.contains("오류") ){
+	        	writeState = WRITE_LOGIN_FAIL;
+	        }
+	    }  
+	} 
 }

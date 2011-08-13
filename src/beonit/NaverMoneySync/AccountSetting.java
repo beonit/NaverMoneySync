@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
@@ -16,8 +17,15 @@ public class AccountSetting extends Activity {
 		EditText editTextNaverId = (EditText)findViewById(R.id.EditTextAccount);
         EditText editTextNaverPasswd = (EditText)findViewById(R.id.EditTextPasswd);
         editTextNaverId.setText(prefs.getString("naverID", ""));
-        editTextNaverPasswd.setText(prefs.getString("naverPasswd", ""));
-
+        String encryptPasswd = prefs.getString("naverPasswd", "");
+        if( encryptPasswd == null || encryptPasswd.length() == 0 )
+        	return;
+        try {
+			editTextNaverPasswd.setText( SimpleCrypto.decrypt("SECGAL", encryptPasswd));
+		} catch (Exception e) {
+			e.printStackTrace();
+			this.finish();
+		}
 	}
 
 	public void onSubmitAccount(View view){
@@ -27,10 +35,13 @@ public class AccountSetting extends Activity {
         SharedPreferences prefs = getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("naverID", editTextNaverId.getText().toString());
-		editor.putString("naverPasswd", editTextNaverPasswd.getText().toString());
+		try {
+			editor.putString("naverPasswd", SimpleCrypto.encrypt("SECGAL", editTextNaverPasswd.getText().toString()) );
+		} catch (Exception e) {
+			Log.e("beonit", "encrypt fail");
+			e.printStackTrace();
+		}
 		editor.commit();
-		
-		// TODO. 로그인 체크
 		
 		this.finish();
     }
