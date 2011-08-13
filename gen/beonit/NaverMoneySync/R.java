@@ -15,6 +15,8 @@ public final class R {
     }
     public static final class id {
         public static final int ButtonAccount=0x7f050005;
+        public static final int ButtonDismiss=0x7f05000d;
+        public static final int ButtonRewrite=0x7f05000c;
         public static final int EditTextAccount=0x7f050008;
         public static final int EditTextPasswd=0x7f050009;
         public static final int EditTextRecordContents=0x7f050003;
@@ -22,8 +24,10 @@ public final class R {
         public static final int EditTextRecordMoney=0x7f050004;
         public static final int TextViewAccount=0x7f050007;
         public static final int TextViewRecord=0x7f050001;
+        public static final int TextViewRewrite=0x7f05000b;
         public static final int viewAccount=0x7f050006;
         public static final int viewRecord=0x7f050000;
+        public static final int viewRewrite=0x7f05000a;
     }
     public static final class layout {
         public static final int main=0x7f030000;

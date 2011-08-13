@@ -2,23 +2,28 @@ package beonit.NaverMoneySync;
 
 import java.util.ArrayList;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
 public class SmsReceiver extends BroadcastReceiver {
 
-	static final String ACTION = "android.provider.Telephony.SMS_RECEIVED";
+	static final String SMS_RECV = "android.provider.Telephony.SMS_RECEIVED";
+	static final String NOTI_CLEAR = "beonit.NOTI_CLEAR";
 	
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		Log.w("beonit", "receive sms");
-		if (intent.getAction().equals(ACTION)) {
-			
+		Log.w("beonit", "smsReceiver onReceive");
+		if (intent.getAction().equals(SMS_RECV)) {
+			Log.w("beonit", "SMS_RECV");
 			Bundle bundle = intent.getExtras();
 			if (bundle == null) {
 				Log.v("beonit", "bundle == null");
@@ -31,15 +36,6 @@ public class SmsReceiver extends BroadcastReceiver {
 				return ;
 			}
 			
-			// loadIdPasswd();
-			SharedPreferences prefs = context.getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
-			String id = prefs.getString("naverID", null);
-			String passwd = prefs.getString("naverPasswd", null);
-			if( id == null || passwd == null ){
-				Log.v("beonit", "id or passwd == null");
-				return;
-			}
-			
 			SmsMessage[] messages = new SmsMessage[pdusObj.length];
 		    for(int i = 0; i < pdusObj.length; i++) {
 		        messages[i] = SmsMessage.createFromPdu((byte[])pdusObj[i]);
@@ -50,15 +46,46 @@ public class SmsReceiver extends BroadcastReceiver {
 		    	return;
 		    }
 		    
+		    // 여러개의 sms가 동시에 올 경우를 생각한다.
 		    String items = new String("");
-		    QuickWriter qw = new QuickWriter(id, passwd, context);
 		    for( SmsMessage msg : messages ) {
-//		        msg.getOriginatingAddress(); // 발신번호
-		        if( !isCardSender(msg.getOriginatingAddress()) )
+		        if( !isCardSender( msg.getOriginatingAddress() ) )
 		        	return;
 		        Log.v("beonit", "sender : " + msg.getOriginatingAddress());
 		        items = items + msg.getDisplayMessageBody() + ";";
 		    }
+		    
+		    // load failed saved pref
+			SharedPreferences prefs = context.getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
+			items = items + prefs.getString("items", "");
+			String id = prefs.getString("naverID", null);
+			String passwd = prefs.getString("naverPasswd", null);
+			Editor ed = prefs.edit();
+
+			// 계정 정보가 없으면 끝.
+			if( id == null || passwd == null || id.length() == 0 || passwd.length() == 0 ){
+				Log.i("beonit", "id/pw 정보 없음");
+		    	Notification notification = new Notification(R.drawable.icon, "계정 정보가 없습니다.", 0);
+		    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
+		    	Intent failIntent = new Intent(context, ViewMain.class);
+		    	failIntent.putExtra("goto", 1);
+		    	PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, failIntent, 0);
+		    	notification.setLatestEventInfo(context, "가계부 쓰기 실패", "계정 정보가 없습니다.", pendingIntent);
+				NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+		    	nm.notify(ViewMain.NOTI_ID, notification);
+		    	// update saved preference
+		    	Log.e("beonit", "saved items" + items);
+		    	ed.putString("items", items);
+			    ed.commit();
+		    	return;
+			}else{
+		    	// clear saved preference
+				ed.putString("items", "");
+				ed.commit();
+			}
+		    
+		    // 전송
+		    QuickWriter qw = new QuickWriter(id, passwd, context);
 		    qw.quickWrite(items);
 			return;
 		}

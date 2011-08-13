@@ -35,7 +35,7 @@
 						android:layout_marginRight="15dp" android:layout_marginTop="15dp"></EditText>
 					<Button android:id="@+id/ButtonAccount"
 						android:layout_width="match_parent" android:layout_height="wrap_content"
-						android:text="완료" android:layout_marginLeft="15dp"
+						android:text="기록하기" android:layout_marginLeft="15dp"
 						android:layout_marginRight="15dp" android:layout_marginTop="15dp"
 						android:textSize="13dp" android:onClick="onSubmitRecord"></Button>
 				</LinearLayout>
@@ -64,12 +64,41 @@
 						android:layout_marginTop="15dp"></EditText>
 					<Button android:id="@+id/ButtonAccount"
 						android:layout_width="match_parent" android:layout_height="wrap_content"
-						android:text="완료" android:layout_marginLeft="15dp"
+						android:text="저장" android:layout_marginLeft="15dp"
 						android:layout_marginRight="15dp" android:layout_marginTop="15dp"
 						android:textSize="13dp" android:onClick="onSubmitAccount"></Button>
 				</LinearLayout>
 			</ScrollView>
-
+			
+			<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+				android:id="@+id/viewRewrite" android:layout_height="fill_parent"
+				android:layout_width="fill_parent">
+				<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					android:orientation="vertical"
+					android:layout_width="fill_parent" android:layout_height="fill_parent"
+					android:theme="@android:style/Theme.Translucent">
+			
+					<TextView android:text="기록 실패 재전송 하기"
+						android:layout_width="fill_parent" android:layout_height="wrap_content"
+						android:textSize="30dp" android:layout_marginTop="15dp"
+						android:layout_marginBottom="15dp" android:gravity="center"></TextView>
+					<TextView android:text=""
+					 	android:id="@+id/TextViewRewrite"
+						android:layout_width="fill_parent" android:layout_height="wrap_content"
+						android:textSize="14dp" android:layout_marginTop="15dp"
+						android:layout_marginBottom="15dp" android:gravity="center"></TextView>
+					<Button android:id="@+id/ButtonRewrite"
+						android:layout_width="match_parent" android:layout_height="wrap_content"
+						android:text="재전송" android:layout_marginLeft="15dp"
+						android:layout_marginRight="15dp" android:layout_marginTop="15dp"
+						android:textSize="13dp" android:onClick="onSubmitRewrite"></Button>
+					<Button android:id="@+id/ButtonDismiss"
+						android:layout_width="match_parent" android:layout_height="wrap_content"
+						android:text="비우기" android:layout_marginLeft="15dp"
+						android:layout_marginRight="15dp" android:layout_marginTop="15dp"
+						android:textSize="13dp" android:onClick="onSubmitRewriteDimiss"></Button>
+				</LinearLayout>
+			</ScrollView>
 		</FrameLayout>
 	</LinearLayout>
 </TabHost>
