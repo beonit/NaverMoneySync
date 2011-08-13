@@ -58,7 +58,7 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
         
         for ( int tab = 0; tab < mTabHost.getTabWidget().getChildCount(); ++tab )
         {
-        	mTabHost.getTabWidget().getChildAt(tab).getLayoutParams().height = 30;
+        	mTabHost.getTabWidget().getChildAt(tab).getLayoutParams().height = 45;
         }	
         
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND,
