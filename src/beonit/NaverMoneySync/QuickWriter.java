@@ -93,7 +93,7 @@ public class QuickWriter {
 		}
 		Context context = mWebView.getContext();
 		SharedPreferences prefs = context.getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
-        String newItems = this.items + "; " + prefs.getString("items", ""); 
+        String newItems = this.items + prefs.getString("items", ""); 
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("items", newItems);
 		editor.commit();
@@ -127,6 +127,7 @@ public class QuickWriter {
 	    public void showHTML(String html) {
 	        if( html.contains("오류") ){
 	        	writeState = WRITE_LOGIN_FAIL;
+	        	sendFail("로그인 실패");
 	        }
 	    }  
 	} 

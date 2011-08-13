@@ -62,7 +62,7 @@ public class Parser {
 	}
 
 	private void parseKB(StringTokenizer tokens) throws Exception {
-//		[KB카드] 이승한님 8*9*카드 03월06일01:01 3000원 훼리미리마트 매탄 사용
+//		[KB카드] 이승한님 8*9*카드 08월06일01:01 3000원 훼리미리마트 매탄 사용
 		if( !tokens.hasMoreTokens() )
 			throw new Exception("sms content parse fail");
 		tokens.nextToken();

@@ -10,6 +10,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.util.Log;
@@ -84,6 +86,21 @@ public class SmsReceiver extends BroadcastReceiver {
 		    	ed.putString("items", items);
 			    ed.commit();
 		    	return;
+			}else if(!checkNetwork(context)){
+				Log.i("beonit", "id/pw 정보 없음");
+		    	Notification notification = new Notification(R.drawable.icon, "인터넷 사용 불가", 0);
+		    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
+		    	Intent failIntent = new Intent(context, ViewMain.class);
+		    	failIntent.putExtra("goto", 1);
+		    	PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, failIntent, 0);
+		    	notification.setLatestEventInfo(context, "가계부 쓰기 실패", "인터넷 사용 불가 상태", pendingIntent);
+				NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+		    	nm.notify(ViewMain.NOTI_ID, notification);
+		    	// update saved preference
+		    	Log.e("beonit", "saved items" + items);
+		    	ed.putString("items", items);
+			    ed.commit();
+			    return;
 			}else{
 		    	// clear saved preference
 				ed.putString("items", "");
@@ -116,4 +133,20 @@ public class SmsReceiver extends BroadcastReceiver {
 				return true;
 		return false;
 	}
+	
+	// check network        
+    public boolean checkNetwork(Context context) 
+    {
+        boolean result = true;
+        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo ni = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        // boolean isWifiAvail = ni.isAvailable();
+        boolean isWifiConn = ni.isConnected();
+        ni = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        // boolean isMobileAvail = ni.isAvailable();
+        boolean isMobileConn = ni.isConnected();
+        if (isWifiConn == false && isMobileConn == false)
+            result = false;
+        return result;
+    }
 }
