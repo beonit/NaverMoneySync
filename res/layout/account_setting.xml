@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent">
+ 	<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_height="fill_parent"
+		android:layout_width="fill_parent">
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			android:orientation="vertical"
+			android:layout_width="fill_parent" android:layout_height="fill_parent"
+			android:theme="@android:style/Theme.Translucent">
+	
+			<TextView android:text="네이버 가계부 연동기" android:id="@+id/TextViewAccount"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:textSize="30dp" android:layout_marginTop="15dp"
+				android:layout_marginBottom="15dp" android:gravity="center"></TextView>
+			<EditText android:layout_width="match_parent"
+				android:layout_height="wrap_content" android:id="@+id/EditTextAccount"
+				android:hint="네이버 아이디" android:layout_marginLeft="15dp"
+				android:layout_marginRight="15dp"></EditText>
+			<EditText android:layout_width="match_parent"
+				android:layout_height="wrap_content" android:id="@+id/EditTextPasswd"
+				android:hint="비밀번호" android:password="true"
+				android:layout_marginLeft="15dp" android:layout_marginRight="15dp"
+				android:layout_marginTop="15dp"></EditText>
+			<Button android:id="@+id/ButtonAccount"
+				android:layout_width="match_parent" android:layout_height="wrap_content"
+				android:text="저장하고 계속" android:layout_marginLeft="15dp"
+				android:layout_marginRight="15dp" android:layout_marginTop="15dp"
+				android:textSize="13dp" android:onClick="onSubmitAccount"></Button>
+		</LinearLayout>
+	</ScrollView>
+</LinearLayout>

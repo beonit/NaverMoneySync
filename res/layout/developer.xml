@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					android:orientation="vertical"
+					android:layout_width="fill_parent" android:layout_height="fill_parent"
+					android:theme="@android:style/Theme.Translucent">
+	
+	<ImageView android:layout_width="wrap_content" android:layout_height="wrap_content"
+						android:layout_gravity="center"
+						android:src="@drawable/icon" android:layout_marginTop="15dp"
+						/>
+	<TextView android:text="네이버 가계부 연동기"
+						android:layout_width="fill_parent" android:layout_height="wrap_content"
+						android:textSize="20dp" android:layout_marginTop="15dp"
+						android:layout_marginBottom="15dp" android:gravity="center"></TextView>
+	<TextView android:text="beonit" android:id="@+id/beonit"
+						android:layout_width="fill_parent" android:layout_height="wrap_content"
+						android:textSize="15dp" android:layout_marginTop="5dp" 
+						android:gravity="center"></TextView>
+	<TextView android:text="beonit@gmail.com" android:id="@+id/beonitEmail"
+						android:layout_width="fill_parent" android:layout_height="wrap_content"
+						android:textSize="15dp" android:layout_marginTop="5dp"
+						android:gravity="center"></TextView>
+	<TextView android:text="http://beonit2.tistory.com" android:id="@+id/beonitBlog"
+						android:layout_width="fill_parent" android:layout_height="wrap_content"
+						android:textSize="15dp" android:layout_marginTop="5dp"
+						android:gravity="center"></TextView>
+	<TextView android:text="open source application (GPL lisence)"
+						android:layout_width="fill_parent" android:layout_height="wrap_content"
+						android:textSize="15dp" android:layout_marginTop="25dp"
+						android:layout_marginBottom="0dp" android:gravity="center"></TextView>
+	<TextView android:text="https://github.com/beonit/NaverMoneySync" android:id="@+id/beonitGithub"
+						android:layout_width="fill_parent" android:layout_height="wrap_content"
+						android:textSize="15dp" android:layout_marginTop="3dp"
+						android:layout_marginBottom="15dp" android:gravity="center"></TextView>
+</LinearLayout>

@@ -5,9 +5,6 @@ import java.util.Calendar;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
 import android.content.Context;
@@ -20,6 +17,8 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -33,19 +32,6 @@ public class ViewMain extends TabActivity {
 	
 	final static int NOTI_ID = 1159;
 	
-	public void setSuccessNotify(){
-    	Notification notification = new Notification(R.drawable.icon, "네이버 가계부에 입력 완료", 0);
-    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
-    	Intent successIntent = new Intent();
-    	PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, successIntent, 0);
-    	notification.setLatestEventInfo(this, "문자 전송 성공", "문자내용", pendingIntent);
-    	NotificationManager nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE); // NotificationManager를 불러옵니다.
-    	nm.notify(NOTI_ID, notification);
-	}
-	
-	//	static final String logTag = "SmsReceiver";
-
-	
 	TabHost mTabHost = null;
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,10 +44,6 @@ public class ViewMain extends TabActivity {
         		.setIndicator("현금 사용")
         		.setContent(R.id.viewRecord)
         		);
-        mTabHost.addTab(mTabHost.newTabSpec("tab_test2")
-        		.setIndicator("네이버 계정")
-        		.setContent(R.id.viewAccount)
-        		);
         mTabHost.addTab(mTabHost.newTabSpec("tab_test3")
         		.setIndicator("재전송")
         		.setContent(R.id.viewRewrite)
@@ -71,10 +53,6 @@ public class ViewMain extends TabActivity {
                 WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
         
         SharedPreferences prefs = getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
-        EditText editTextNaverId = (EditText)findViewById(R.id.EditTextAccount);
-        EditText editTextNaverPasswd = (EditText)findViewById(R.id.EditTextPasswd);
-        editTextNaverId.setText(prefs.getString("naverID", ""));
-        editTextNaverPasswd.setText(prefs.getString("naverPasswd", ""));
         updateRewriteView(prefs);
         
         Button recordDate = (Button)findViewById(R.id.EditTextRecordDate);
@@ -95,16 +73,35 @@ public class ViewMain extends TabActivity {
 		String id = prefs.getString("naverID", null);
 		String passwd = prefs.getString("naverPasswd", null);
 		if( id == null || passwd == null || id.length() == 0 || passwd.length() == 0 ){
-			mTabHost.setCurrentTab( 1 );
+			Intent intent = new Intent(this, AccountSetting.class);
+        	startActivity(intent);
 		}
-    	
-		// 특정 페이지로 이동해야 한다면...
-    	int tab = 0;
-    	try{
-    		tab = savedInstanceState.getInt("goto", 0);
-    		mTabHost.setCurrentTab( tab );
-    	}catch(Exception e){
-    	}
+    }
+	
+	public static final int MENU_ACCOUNT_SETTING = 1;
+	public static final int MENU_ABOUT = 2;
+	public boolean onCreateOptionsMenu (Menu menu){
+		menu.add(0, MENU_ACCOUNT_SETTING, 1, "naver 계정 설정");
+		menu.add(0, MENU_ABOUT, 1, "about");
+		return true;
+	}
+	
+	/* Handles item selections */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	Intent intent;
+        switch ( item.getItemId() ) {
+        case MENU_ACCOUNT_SETTING:
+        	intent = new Intent(this, AccountSetting.class);
+        	startActivity(intent);
+        	return true;
+        case MENU_ABOUT:
+        	intent = new Intent(this, Developer.class);
+        	startActivity(intent);
+        	return true;
+        default:
+        	return false;
+		}
     }
     
     private void updateRewriteView(SharedPreferences prefs) {
@@ -123,19 +120,6 @@ public class ViewMain extends TabActivity {
         }
 	}
 
-	public void onSubmitAccount(View view){
-        EditText editTextNaverId = (EditText)findViewById(R.id.EditTextAccount);
-        EditText editTextNaverPasswd = (EditText)findViewById(R.id.EditTextPasswd);
-
-        SharedPreferences prefs = getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("naverID", editTextNaverId.getText().toString());
-		editor.putString("naverPasswd", editTextNaverPasswd.getText().toString());
-		editor.commit();
-		
-		// TODO. 로그인 체크
-    }
-    
     public void onSubmitRewrite(View view){
     	SharedPreferences prefs = getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
         String items = prefs.getString("items", "");
@@ -227,7 +211,7 @@ public class ViewMain extends TabActivity {
 					    }
 					});
 			alert.show();
-			mTabHost.setCurrentTab(1);
+			this.startActivity( new Intent(this, AccountSetting.class ));
 			return false;
 		}
 		
@@ -279,6 +263,7 @@ public class ViewMain extends TabActivity {
         		if( state != newState ){
         			state = newState;
         			mHandler.sendEmptyMessage(state);
+        			i = 0; // 한 스텝마다 10초씩 기다릴 수 있다.
         		}
         		if( state == QuickWriter.WRITE_SUCCESS || state == QuickWriter.WRITE_FAIL ){
         			return;

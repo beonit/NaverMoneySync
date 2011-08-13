@@ -103,6 +103,8 @@ public class SmsReceiver extends BroadcastReceiver {
 		nums.add("15888100");    // LOTTE
 		nums.add("15887000");    // CITY
 		nums.add("15887200");    // ?
+		nums.add("15991155");    // HANA
+		nums.add("15881688");    // KB
 		for( String num : nums )
 			if( sender.equals(num) )
 				return true;
