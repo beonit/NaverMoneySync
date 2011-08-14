@@ -120,16 +120,39 @@ public class SmsReceiver extends BroadcastReceiver {
 		nums.add("15888900");    // SAMSUNG
 		nums.add("15888700");    // SAMSUNG
 		nums.add("15886700");    // KEB
+		nums.add("15883000");    // KEB    
 		nums.add("15884000");    // WOORI
+		nums.add("15885000");    // WOORI
 		nums.add("0220085000");  // WOORI - 외국
 		nums.add("15884000");    // BC
 		nums.add("15888100");    // LOTTE
 		nums.add("15887000");    // CITY
+		nums.add("15881000");    // CITY
 		nums.add("15887200");    // ?
 		nums.add("15991155");    // HANA
+		nums.add("15991111");    // HANA
 		nums.add("15881688");    // KB
+		nums.add("15889999");    // KB
 		nums.add("15882100");    // 농협
 		nums.add("15776000");    // HYUNDAI
+		nums.add("15776200");    // HYUNDAI
+		nums.add("15778000");    // 신한
+		nums.add("15884560");    // 현대 백화점 카드
+		nums.add("15880056");    // 동양종금
+		nums.add("15773997");    // 동양종금 W 제휴카드
+		nums.add("15881155");    // 하나 sk
+		nums.add("15881599");    // 제일은행
+		// 동양 삼성
+		nums.add("15881515");    // 기업은행
+		// 제주은행
+		// 광주은행
+		nums.add("15881515");   // 수협
+		// 축협
+		nums.add("15888801");   // 새마을 금고
+		nums.add("15881900");   // 새마을 금고
+		nums.add("15887000");   // 한미은행
+		nums.add("15884114");   // 조흥은행		
+		
 		for( String num : nums )
 			if( sender.equals(num) )
 				return true;

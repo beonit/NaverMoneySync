@@ -2,6 +2,7 @@ package beonit.NaverMoneySync;
 
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -20,7 +21,13 @@ public class NaverViewClient extends WebViewClient {
 	
 	public void onPageStarted(WebView view, String url, Bitmap favicon){
 		if( view.willNotDraw() && mProgressDialog == null )
-			mProgressDialog = ProgressDialog.show(view.getContext(), "가계부 로딩", "로그인 페이지 로딩", false);
+			try{
+				mProgressDialog = ProgressDialog.show(view.getContext(), "가계부 로딩", "로그인 페이지 로딩", false);
+				mProgressDialog.setCancelable(true);
+			}catch(Exception e){
+				Log.e("beonit", "dialog error");
+				e.printStackTrace();
+			}
 	}
 	
 	

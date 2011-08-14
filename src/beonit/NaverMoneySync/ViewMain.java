@@ -93,8 +93,7 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 	}
 	
 	public void onActivityResult(int requestCode, int resultCode, Intent intent){
-		startNaverView(getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE));
-		mTabHost.setCurrentTab(1);
+		startNaverView( getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE) );
 		updateNaverView();
 	}
 
@@ -273,6 +272,7 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 
     	// send thread and dialog start
     	mProgressDialog = ProgressDialog.show(this, "가계부 쓰기", "접속중...", false);
+    	mProgressDialog.setCancelable(true);
 		QuickWriter writer = new QuickWriter(id, passwd, this);
 		writer.setResultNoti(false);
 		progressThread = new ProgressThread(mHandler, writer, items, this);
@@ -419,18 +419,45 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
    	    	
     }
 
+	@SuppressWarnings("null")
 	private void updateNaverView() {
+		mTabHost.setCurrentTab(1);
+
+		SharedPreferences prefs = getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
+		String id = prefs.getString("naverID", null);
+		String passwd = prefs.getString("naverPasswd", null);
+		boolean hasError = false;
+		AlertDialog.Builder alert = null;
+		if( id == null || passwd == null || id.length() == 0 || passwd.length() == 0 ){
+			alert = new AlertDialog.Builder(this);
+			alert.setTitle( "계정 정보 없음" );
+			alert.setMessage( "계정 정보를 입력해 주세요." );
+			hasError = true;
+			return;
+		}
 		if( checkNetwork() == false ){
-			AlertDialog.Builder alert = new AlertDialog.Builder(this);
+			alert = new AlertDialog.Builder(this);
 			alert.setTitle( "통신 불가능" );
 			alert.setMessage( "DB에 저장됩니다." );
-			alert.setPositiveButton(
-					 "닫기", new DialogInterface.OnClickListener() {
-					    public void onClick( DialogInterface dialog, int which) {
-					        dialog.dismiss();   //닫기
-					    }
-					});
-			alert.show();
+			hasError = true;
+			return;
+		}
+		if( hasError ){
+			try{
+				alert.setPositiveButton(
+						 "닫기", new DialogInterface.OnClickListener() {
+						    public void onClick( DialogInterface dialog, int which) {
+						    	dialog.dismiss();   //닫기
+						    }
+						});
+				alert.show();
+			}
+			catch (NullPointerException e){
+				e.printStackTrace();
+			}
+			catch (Exception e){
+				e.printStackTrace();
+			}
 			return;
 		}
 		WebView wb = (WebView)findViewById(R.id.naverView);
