@@ -128,6 +128,8 @@ public class SmsReceiver extends BroadcastReceiver {
 		nums.add("15887200");    // ?
 		nums.add("15991155");    // HANA
 		nums.add("15881688");    // KB
+		nums.add("15882100");    // ³óÇù
+		nums.add("15776000");    // HYUNDAI
 		for( String num : nums )
 			if( sender.equals(num) )
 				return true;
