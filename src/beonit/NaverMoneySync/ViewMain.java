@@ -87,12 +87,15 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 		String passwd = prefs.getString("naverPasswd", null);
 		if( id == null || passwd == null || id.length() == 0 || passwd.length() == 0 ){
 			Intent intent = new Intent(this, AccountSetting.class);
-        	startActivityForResult(intent, 0);
+        	startActivityForResult(intent, 100);
 		}
-		startNaverView(prefs);
+		else
+			startNaverView(prefs);
 	}
 	
 	public void onActivityResult(int requestCode, int resultCode, Intent intent){
+		if( resultCode != RESULT_OK )
+			return;
 		startNaverView( getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE) );
 		updateNaverView();
 	}
@@ -243,7 +246,7 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 		if( id == null || passwd == null || id.length() == 0 || passwd.length() == 0 ){
 			AlertDialog.Builder alert = new AlertDialog.Builder(this);
 			alert.setTitle( "계정 없음" );
-			alert.setMessage( "네이버 계정을 설정해 주세요" );
+			alert.setMessage( "네이버 계정을 설정해 주세요\n실패함에 저장되지 않습니다" );
 			alert.setPositiveButton(
 					 "닫기", new DialogInterface.OnClickListener() {
 					    public void onClick( DialogInterface dialog, int which) {
@@ -259,7 +262,7 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
     	if( checkNetwork() == false ){
     		AlertDialog.Builder alert = new AlertDialog.Builder(this);
 			alert.setTitle( "통신 불가능" );
-			alert.setMessage( "DB에 저장됩니다." );
+			alert.setMessage( "실패함에 저장되지 않습니다" );
 			alert.setPositiveButton(
 					 "닫기", new DialogInterface.OnClickListener() {
 					    public void onClick( DialogInterface dialog, int which) {
@@ -353,7 +356,13 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 				mProgressDialog.dismiss(); // ProgressDialog 종료
 				alert = new AlertDialog.Builder(activity);
 				alert.setTitle( "쓰기 실패" );
-				alert.setMessage( "다시 시도해 주세요" );
+				alert.setMessage( "다시 시도해 주세요 \n전송 실패함에 저장되지 않습니다." );
+				break;
+			case QuickWriter.WRITE_FAIL_REGISTER:
+				mProgressDialog.dismiss(); // ProgressDialog 종료
+				alert = new AlertDialog.Builder(activity);
+				alert.setTitle( "가계부 가입 안됨" );
+				alert.setMessage( "현재 앱을 닫고 모바일 웹/PC 로 먼저 약관동의를 처리하고 접속해 주세요." );
 				break;
 			default:
 				break;

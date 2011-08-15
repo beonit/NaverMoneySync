@@ -18,6 +18,7 @@ public class QuickWriter {
 	public static final int WRITE_WRITING = 4;
 	public static final int WRITE_SUCCESS = 5;
 	public static final int WRITE_FAIL = 6;
+	public static final int WRITE_FAIL_REGISTER = 7;
 	
 	private String id;
 	private String passwd;
@@ -78,9 +79,14 @@ public class QuickWriter {
     			sendSuccess();
     			view.destroy();
     			writeState = WRITE_SUCCESS;
+    		}if( url.equals("http://beta.moneybook.naver.com/m/mbookUser.nhn")){
+    			view.destroy();
+    			sendFail("가계부 약관동의 안됨");
+    			writeState = WRITE_FAIL_REGISTER;
     		}else{
     			Log.e("boenit", "fail : " + url);
     			view.destroy();
+    			sendFail("원인을 모름");
     			writeState = WRITE_FAIL;
     		}
     	}
@@ -91,12 +97,14 @@ public class QuickWriter {
 			Log.e("beonit", "items must have some sms text");
 			return;
 		}
+		// 메세지 실패함에 다시 넣는다.
 		Context context = mWebView.getContext();
 		SharedPreferences prefs = context.getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
         String newItems = this.items + prefs.getString("items", ""); 
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("items", newItems);
 		editor.commit();
+		// 결과를 notify 한다.
 		if( resultNoti ){
 			// result notify  
 			Notification notification = new Notification(R.drawable.icon, "가계부 입력 실패", 0);
@@ -111,6 +119,7 @@ public class QuickWriter {
 	}
 
 	private void sendSuccess() {
+		// 결과를 notify 한다.
 		if( resultNoti ){
 			Context context = mWebView.getContext();
 	    	Notification notification = new Notification(R.drawable.icon, "네이버 가계부에 입력 완료", 0);

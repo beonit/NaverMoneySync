@@ -42,7 +42,7 @@ public class AccountSetting extends Activity {
 			e.printStackTrace();
 		}
 		editor.commit();
-		
+		this.setResult(RESULT_OK);
 		this.finish();
     }
     
