@@ -26,6 +26,7 @@ public class QuickWriter {
 	private WebView mWebView;
 	private int writeState = WRITE_READY;
 	private boolean resultNoti = true;
+	private boolean failSave = true;
 	
 	public void setResultNoti( boolean noti ){
 		this.resultNoti = noti;
@@ -98,15 +99,18 @@ public class QuickWriter {
 			return;
 		}
 		// 메세지 실패함에 다시 넣는다.
-		Context context = mWebView.getContext();
-		SharedPreferences prefs = context.getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
-        String newItems = this.items + prefs.getString("items", ""); 
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("items", newItems);
-		editor.commit();
+		if( failSave ){
+			Context context = mWebView.getContext();
+			SharedPreferences prefs = context.getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
+	        String newItems = this.items + prefs.getString("items", ""); 
+	        SharedPreferences.Editor editor = prefs.edit();
+	        editor.putString("items", newItems);
+			editor.commit();
+		}
 		// 결과를 notify 한다.
 		if( resultNoti ){
 			// result notify  
+			Context context = mWebView.getContext();
 			Notification notification = new Notification(R.drawable.icon, "가계부 입력 실패", 0);
 			notification.flags |= Notification.FLAG_AUTO_CANCEL;
 			Intent failIntent = new Intent(context, ViewMain.class);
@@ -139,5 +143,9 @@ public class QuickWriter {
 	        	sendFail("로그인 실패");
 	        }
 	    }  
+	}
+
+	public void setFailSave(boolean failSave) {
+		this.failSave = failSave;
 	} 
 }

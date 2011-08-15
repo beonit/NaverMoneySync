@@ -174,7 +174,7 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 			alert.show();
 			return;
     	}
-    	if( doSubmit(items) ){
+    	if( doSubmit(items, true) ){
     		Editor ed = prefs.edit();
         	ed.putString("items", "");
         	ed.commit();
@@ -229,10 +229,10 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 								.append(editMoney.getText()).append("원")
 								);
 
-		return doSubmit(items);
+		return doSubmit(items, false);
     }
     
-    public boolean doSubmit(String items){
+    public boolean doSubmit(String items, boolean failSave ){
 		String id, passwd;
     	// 네이버 계정 설정
     	SharedPreferences prefs = getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
@@ -277,6 +277,7 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
     	mProgressDialog = ProgressDialog.show(this, "가계부 쓰기", "접속중...", false);
     	mProgressDialog.setCancelable(true);
 		QuickWriter writer = new QuickWriter(id, passwd, this);
+		writer.setFailSave(failSave);
 		writer.setResultNoti(false);
 		progressThread = new ProgressThread(mHandler, writer, items, this);
 		progressThread.start();
