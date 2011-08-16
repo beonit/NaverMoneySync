@@ -25,15 +25,16 @@ public class NaverViewClient extends WebViewClient {
 	public void onPageStarted(WebView view, String url, Bitmap favicon){
 		if( view.willNotDraw() && mProgressLoginDialog == null ){
 			try{
-				mProgressLoginDialog = ProgressDialog.show(view.getContext(), "가계부 로딩", "로그인 페이지 로딩", false);
+				mProgressLoginDialog = ProgressDialog.show(view.getContext(), "가계부 로딩", "3G는 더 기다려 주세요\n로그인 페이지 로딩", false);
 				mProgressLoginDialog.setCancelable(true);
 			}catch(Exception e){
 				Log.e("beonit", "dialog error");
 				e.printStackTrace();
 			}
-		}else{
-			mProgressLoadingDialog = ProgressDialog.show(view.getContext(), "가계부 로딩", "웹페이지 로딩 중 입니다\n제기랄 3G 라면 좀 더 기다려주세요\n뒤로가기 버튼을 누르면 사라집니다.", false);
-			mProgressLoginDialog.setCancelable(true);
+		}else if( !view.willNotDraw() && mProgressLoadingDialog == null && mProgressLoginDialog == null ){
+			Log.e("beonit", "loading dialog");
+			mProgressLoadingDialog = ProgressDialog.show(view.getContext(), "가계부 웹페이지 로딩", " 3G는 더 기다려 주세요\n뒤로가기 버튼을 누르면 사라집니다.", false);
+			mProgressLoadingDialog.setCancelable(true);
 		}
 	}
 	
@@ -52,16 +53,16 @@ public class NaverViewClient extends WebViewClient {
 			MyJavaScriptInterface iJS = new MyJavaScriptInterface();
 			view.addJavascriptInterface(iJS, "HTMLOUT");
 			if( mProgressLoginDialog != null )
-				mProgressLoginDialog.setMessage("로그인 시도");
+				mProgressLoginDialog.setMessage("3G는 더 기다려 주세요\n로그인 시도");
 		}
 		else if( url.equals("https://nid.naver.com/nidlogin.login?svctype=262144") ){
 			view.loadUrl("javascript:window.HTMLOUT.showHTML('' + document.body.getElementsByTagName('span')[3].innerHTML);");
 			if( mProgressLoginDialog != null )
-				mProgressLoginDialog.setMessage("로그인 처리");
+				mProgressLoginDialog.setMessage("3G는 더 기다려 주세요\n로그인 처리");
 			view.setWillNotDraw(false);
 		}else if( url.contains("http://static.nid.naver.com/login/sso/finalize.nhn") ){
 			if( mProgressLoginDialog != null )
-				mProgressLoginDialog.setMessage("가계부 로딩 중");
+				mProgressLoginDialog.setMessage("3G는 더 기다려 주세요\n가계부 로딩 중");
 		}else if( url.equals("http://beta.moneybook.naver.com/m/view.nhn?method=monthly") ){
 			// 정상 로딩 완료
 			closeDialog();

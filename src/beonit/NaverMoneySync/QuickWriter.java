@@ -19,6 +19,7 @@ public class QuickWriter {
 	public static final int WRITE_SUCCESS = 5;
 	public static final int WRITE_FAIL = 6;
 	public static final int WRITE_FAIL_REGISTER = 7;
+	public static final int TIME_OUT = 8;
 	
 	private String id;
 	private String passwd;
@@ -38,6 +39,7 @@ public class QuickWriter {
 	
 	public boolean quickWrite(String items){
 		this.items = items.replace("\n", " ");
+		mWebView.getSettings().setJavaScriptEnabled(true);
 		mWebView.loadUrl("https://nid.naver.com/nidlogin.login?svctype=262144&url=http://beta.moneybook.naver.com/m/write.nhn?method=quick");
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.addJavascriptInterface(new MyJavaScriptInterface(), "HTMLOUT");
@@ -63,20 +65,24 @@ public class QuickWriter {
     		else if( url.equals("https://nid.naver.com/nidlogin.login?svctype=262144") ){
     			writeState = WRITE_LOGIN;
     			view.loadUrl("javascript:window.HTMLOUT.showHTML('' + document.body.getElementsByTagName('span')[3].innerHTML);");
-    		}else if( url.contains("http://static.nid.naver.com/login/sso/finalize.nhn") ){
+    		}
+    		else if( url.contains("http://static.nid.naver.com/login/sso/finalize.nhn") ){
     			Log.v("beonit", "login... success");
     			writeState = WRITE_LOGIN_SUCCESS;
-    		}else if( url.equals("http://beta.moneybook.naver.com/m/write.nhn?method=quick") ){
+    		}
+    		else if( url.equals("http://beta.moneybook.naver.com/m/write.nhn?method=quick") ){
     			Log.v("beonit", "write items : " + items);
     			view.loadUrl("javascript:items.value='"+ items +"'");
 	    		view.loadUrl("javascript:writeForm.submit()");
 	    		writeState = WRITE_WRITING;
-    		}else if( url.equals("http://beta.moneybook.naver.com/m/smry.nhn")){
+    		}
+    		else if( url.equals("http://beta.moneybook.naver.com/m/smry.nhn")){
     			Log.v("beonit", "write finish");
     			sendSuccess();
     			view.destroy();
     			writeState = WRITE_SUCCESS;
-    		}if( url.equals("http://beta.moneybook.naver.com/m/mbookUser.nhn")){
+    		}
+    		else if( url.equals("http://beta.moneybook.naver.com/m/mbookUser.nhn")){
     			view.destroy();
     			sendFail("가계부 약관동의 안됨");
     			writeState = WRITE_FAIL_REGISTER;

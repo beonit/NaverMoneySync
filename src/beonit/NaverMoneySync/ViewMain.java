@@ -285,7 +285,7 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
     	}
 
     	// send thread and dialog start
-    	mProgressDialog = ProgressDialog.show(this, "가계부 쓰기", "접속중...", false);
+    	mProgressDialog = ProgressDialog.show(this, "가계부 쓰기", "3G는 더 기다려 주세요\n접속중...", false);
     	mProgressDialog.setCancelable(true);
 		QuickWriter writer = new QuickWriter(id, passwd, this);
 		writer.setFailSave(failSave);
@@ -302,16 +302,16 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case QuickWriter.WRITE_READY:
-				mProgressDialog.setMessage("접속 중...");
+				mProgressDialog.setMessage("3G는 더 기다려 주세요\n접속 중...");
 				break;
 			case QuickWriter.WRITE_LOGIN:
-				mProgressDialog.setMessage("로그인 페이지 로드");
+				mProgressDialog.setMessage("3G는 더 기다려 주세요\n로그인 페이지 로드");
 				break;
 			case QuickWriter.WRITE_LOGIN_SUCCESS:
-				mProgressDialog.setMessage("로그인 성공");
+				mProgressDialog.setMessage("3G는 더 기다려 주세요\n입력 페이지 로드");
 				break;
 			case QuickWriter.WRITE_WRITING:
-				mProgressDialog.setMessage("가계부 내용 입력 ");
+				mProgressDialog.setMessage("3G는 더 기다려 주세요\n가계부 내용 입력 ");
 				break;
 			case QuickWriter.WRITE_SUCCESS:
 				mProgressDialog.dismiss(); // ProgressDialog 종료
@@ -340,6 +340,12 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 				alert = new AlertDialog.Builder(activity);
 				alert.setTitle( "가계부 가입 안됨" );
 				alert.setMessage( "현재 앱을 닫고 모바일 웹/PC 로 먼저 약관동의를 처리하고 접속해 주세요." );
+				break;
+			case QuickWriter.TIME_OUT:
+				mProgressDialog.dismiss(); // ProgressDialog 종료
+				alert = new AlertDialog.Builder(activity);
+				alert.setTitle( "쓰기 실패" );
+				alert.setMessage( "다시 시도해 주세요\n시간이 오래걸립니다." );
 				break;
 			default:
 				break;
@@ -458,8 +464,8 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 	     if (keyCode == KeyEvent.KEYCODE_BACK && mTabHost.getCurrentTab() == 1 ) {
 	    	 Builder alert = new AlertDialog.Builder(this);
-	    	 alert.setTitle( "앱 종료" );
-	    	 alert.setMessage( "앱을 종료 합니까?" );
+	    	 alert.setTitle( "앱을 종료 합니까?" );
+	    	 alert.setMessage( "한번 더 누르면 창이 사라집니다." );
 	    	 alert.setPositiveButton(
 					 "종료", new DialogInterface.OnClickListener() {
 					    public void onClick( DialogInterface dialog, int which) {
@@ -474,7 +480,7 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 					    		wb.goBack();
 					    }
 					});
-			alert.show();
+	    	 alert.show();
 	    	 return true;
 	     }
 	     return super.onKeyDown(keyCode, event);    

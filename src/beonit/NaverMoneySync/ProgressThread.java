@@ -28,12 +28,14 @@ public class ProgressThread extends Thread {
     			if( mHandler != null )
     				mHandler.sendEmptyMessage(state);
     			i = 0; // 한 스텝마다 10초씩 기다릴 수 있다.
-    		}
+    		}else
+    			continue;
     		if( state == QuickWriter.WRITE_SUCCESS || state == QuickWriter.WRITE_FAIL || state == QuickWriter.WRITE_LOGIN_FAIL || state == QuickWriter.WRITE_FAIL_REGISTER ){
     			return;
     		}
     	}
-    	if( mHandler != null )
-    		mHandler.sendEmptyMessage(QuickWriter.WRITE_FAIL);
+    	if( mHandler != null ){
+    		mHandler.sendEmptyMessage(QuickWriter.TIME_OUT);
+    	}
    }
 }
