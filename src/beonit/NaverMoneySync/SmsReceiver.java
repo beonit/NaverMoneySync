@@ -2,6 +2,7 @@ package beonit.NaverMoneySync;
 
 import java.util.ArrayList;
 
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -13,6 +14,8 @@ import android.content.SharedPreferences.Editor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
@@ -25,6 +28,7 @@ public class SmsReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		Log.w("beonit", "smsReceiver onReceive");
 		if (intent.getAction().equals(SMS_RECV)) {
+			// 정보 갖추기
 			Log.w("beonit", "SMS_RECV");
 			Bundle bundle = intent.getExtras();
 			if (bundle == null) {
@@ -108,8 +112,11 @@ public class SmsReceiver extends BroadcastReceiver {
 			}
 		    
 		    // 전송
-		    QuickWriter qw = new QuickWriter(id, passwd, context);
-		    qw.quickWrite(items);
+		    QuickWriter writer = new QuickWriter(id, passwd, context);
+			writer.setFailSave(true);
+			writer.setResultNoti(true);
+		    ProgressThread progressThread = new ProgressThread(mHandler, writer, items);
+			progressThread.start();
 			return;
 		}
 	}
@@ -174,4 +181,66 @@ public class SmsReceiver extends BroadcastReceiver {
             result = false;
         return result;
     }
+    
+ // send
+    private Handler mHandler = new SyncHandler(); 
+    public class SyncHandler extends Handler {
+//    	private AlertDialog.Builder alert = null;
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case QuickWriter.WRITE_READY:
+//				mProgressDialog.setMessage("접속 중...");
+				break;
+			case QuickWriter.WRITE_LOGIN:
+//				mProgressDialog.setMessage("로그인 페이지 로드");
+				break;
+			case QuickWriter.WRITE_LOGIN_SUCCESS:
+//				mProgressDialog.setMessage("로그인 성공");
+				break;
+			case QuickWriter.WRITE_WRITING:
+//				mProgressDialog.setMessage("가계부 내용 입력 ");
+				break;
+			case QuickWriter.WRITE_SUCCESS:
+//				mProgressDialog.dismiss(); // ProgressDialog 종료
+//		    	EditText editText = (EditText)findViewById(R.id.EditTextRecordContents);
+//		    	EditText editMoney = (EditText)findViewById(R.id.EditTextRecordMoney);
+//				editText.setText("");
+//				editMoney.setText("");
+//				alert = new AlertDialog.Builder(activity);
+//				alert.setTitle( "입력 성공" );
+//				alert.setMessage( "저장되었습니다" );
+				break;
+			case QuickWriter.WRITE_LOGIN_FAIL:
+//				mProgressDialog.dismiss(); // ProgressDialog 종료
+//				alert = new AlertDialog.Builder(activity);
+//				alert.setTitle( "로그인 실패" );
+//				alert.setMessage( "아이디 암호를 확인해 주세요" );
+				break;
+			case QuickWriter.WRITE_FAIL:
+//				mProgressDialog.dismiss(); // ProgressDialog 종료
+//				alert = new AlertDialog.Builder(activity);
+//				alert.setTitle( "쓰기 실패" );
+//				alert.setMessage( "다시 시도해 주세요 \n전송 실패함에 저장되지 않습니다." );
+				break;
+			case QuickWriter.WRITE_FAIL_REGISTER:
+//				mProgressDialog.dismiss(); // ProgressDialog 종료
+//				alert = new AlertDialog.Builder(activity);
+//				alert.setTitle( "가계부 가입 안됨" );
+//				alert.setMessage( "현재 앱을 닫고 모바일 웹/PC 로 먼저 약관동의를 처리하고 접속해 주세요." );
+				break;
+			default:
+				break;
+			}
+//			if( alert != null ){
+//				alert.setPositiveButton(
+//					 "닫기", new DialogInterface.OnClickListener() {
+//					    public void onClick( DialogInterface dialog, int which) {
+//					        dialog.dismiss();   //닫기
+//					    }
+//					});
+//				alert.show();
+//			}
+		}
+	};
+    
 }

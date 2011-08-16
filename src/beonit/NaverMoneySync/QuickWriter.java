@@ -28,10 +28,6 @@ public class QuickWriter {
 	private boolean resultNoti = true;
 	private boolean failSave = true;
 	
-	public void setResultNoti( boolean noti ){
-		this.resultNoti = noti;
-	}
-	
 	public QuickWriter(String id, String passwd, Context context){
 		this.id = id;
 		this.passwd = passwd;
@@ -92,6 +88,28 @@ public class QuickWriter {
     		}
     	}
     }
+	
+	final class MyJavaScriptInterface {
+	    public void showHTML(String html) {
+	        if( html.contains("오류") ){
+	        	writeState = WRITE_LOGIN_FAIL;
+	        	sendFail("로그인 실패");
+	        }
+	    }  
+	}
+	
+	///////////////////////////////////////////////////////////////////////////////////
+	// 이 라인 이하는 여기서 하는 일이 아니라 smsReceiver, viewMain 에서 처리해 주어야 하는 일들이다.
+	// 설계상 이곳에서는 통신 상태의 state 만 관리해야 한다.
+    ///////////////////////////////////////////////////////////////////////////////////
+	
+	public void setResultNoti( boolean noti ){
+		this.resultNoti = noti;
+	}
+	
+	public void setFailSave(boolean failSave) {
+		this.failSave = failSave;
+	} 
 
 	public void sendFail(String cause) {
 		if( items == null && mWebView != null ){
@@ -135,17 +153,4 @@ public class QuickWriter {
 	    	nm.notify(ViewMain.NOTI_ID, notification);
 		}
 	}
-	
-	final class MyJavaScriptInterface {
-	    public void showHTML(String html) {
-	        if( html.contains("오류") ){
-	        	writeState = WRITE_LOGIN_FAIL;
-	        	sendFail("로그인 실패");
-	        }
-	    }  
-	}
-
-	public void setFailSave(boolean failSave) {
-		this.failSave = failSave;
-	} 
 }

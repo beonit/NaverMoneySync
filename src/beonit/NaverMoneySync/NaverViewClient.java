@@ -32,7 +32,6 @@ public class NaverViewClient extends WebViewClient {
 			}
 	}
 	
-	
 	public void onPageFinished(WebView view, String url){
 		Log.i("beonit", url);
 		if( id == null || passwd == null || id.length() == 0 || passwd.length() == 0 )
@@ -55,22 +54,27 @@ public class NaverViewClient extends WebViewClient {
 			if( mProgressDialog != null )
 				mProgressDialog.setMessage("가계부 로딩 중");
 		}else if( url.equals("http://beta.moneybook.naver.com/m/view.nhn?method=monthly") ){
+			// 정상 로딩 완료
 			closeDialog();
 		}else if( url.equals("http://beta.moneybook.naver.com/m/mbookUser.nhn")){
 			closeDialog();
-    		AlertDialog.Builder alert = new AlertDialog.Builder(view.getContext());
-			alert.setTitle( "가계부 가입 안됨" );
-			alert.setMessage( "현재 앱을 닫고 모바일 웹/PC 로 먼저 약관동의를 처리하고 접속해 주세요." );
-			alert.setPositiveButton(
-					 "닫기", new DialogInterface.OnClickListener() {
-					    public void onClick( DialogInterface dialog, int which) {
-					        dialog.dismiss();   //닫기
-					    }
-					});
-			alert.show();
+    		errorNotify(view, "가계부 가입 안됨", "현재 앱을 닫고 모바일 웹/PC 로 먼저 약관동의를 처리하고 접속해 주세요." );
 		}else{
 			closeDialog();
 		}
+	}
+
+	private void errorNotify(WebView view, String title, String message) {
+		AlertDialog.Builder alert = new AlertDialog.Builder(view.getContext());
+		alert.setTitle( title );
+		alert.setMessage( message );
+		alert.setPositiveButton(
+				 "닫기", new DialogInterface.OnClickListener() {
+				    public void onClick( DialogInterface dialog, int which) {
+				        dialog.dismiss();   //닫기
+				    }
+				});
+		alert.show();
 	}
 	
 	public void closeDialog(){
@@ -88,4 +92,9 @@ public class NaverViewClient extends WebViewClient {
 	        }
 	    }  
 	}  
+
+	public void onReceivedError(WebView view, int errorCode, String description, String failingUrl){
+		closeDialog();
+		errorNotify(view, "로딩 에러", "네이버 로딩에 실패했습니다" );
+	}
 }

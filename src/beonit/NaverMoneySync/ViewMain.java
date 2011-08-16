@@ -3,6 +3,7 @@ package beonit.NaverMoneySync;
 import java.util.Calendar;
 
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -17,10 +18,11 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -42,15 +44,15 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
         
         mTabHost = getTabHost();
         
-        mTabHost.addTab(mTabHost.newTabSpec("tab_test1")
+        mTabHost.addTab(mTabHost.newTabSpec("tabWrite")
         		.setIndicator("현금 사용")
         		.setContent(R.id.viewRecord)
         		);
-        mTabHost.addTab(mTabHost.newTabSpec("tab_test3")
+        mTabHost.addTab(mTabHost.newTabSpec("tabNaverView")
         		.setIndicator("가계부 조회")
         		.setContent(R.id.viewNaver)
         		);
-        mTabHost.addTab(mTabHost.newTabSpec("tab_test2")
+        mTabHost.addTab(mTabHost.newTabSpec("tabRewrite")
         		.setIndicator("재전송")
         		.setContent(R.id.viewRewrite)
         		);
@@ -61,8 +63,8 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
         	mTabHost.getTabWidget().getChildAt(tab).getLayoutParams().height = 45;
         }	
         
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND,
-                WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND,
+//                WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
         
         // rewrite setup
         SharedPreferences prefs = getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
@@ -101,12 +103,21 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 	}
 
 	
+	public class MyWebChromeClient extends WebChromeClient {
+		@Override
+		public void onProgressChanged(WebView view, int newProgress) {
+			ViewMain.this.setProgress(newProgress * 100);
+		}
+	}
+	
 	private void startNaverView(SharedPreferences prefs) {
 		// webview setting
         WebView wb = (WebView)findViewById(R.id.naverView);
         wb.setWillNotDraw( true );
         try {
+        	wb.setWebChromeClient(new MyWebChromeClient());
 			wb.setWebViewClient( new NaverViewClient(prefs.getString("naverID", null), SimpleCrypto.decrypt("SECGAL", prefs.getString("naverPasswd", null) ) ));
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;
@@ -279,47 +290,14 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 		QuickWriter writer = new QuickWriter(id, passwd, this);
 		writer.setFailSave(failSave);
 		writer.setResultNoti(false);
-		progressThread = new ProgressThread(mHandler, writer, items, this);
+		progressThread = new ProgressThread(mHandler, writer, items);
 		progressThread.start();
 		return true;
 	}
     
-    private class ProgressThread extends Thread {
-    	Handler mHandler;
-    	QuickWriter writer;
-    	String items;
-        ProgressThread(Handler h, QuickWriter writer, String items, Context context) {
-        	this.writer = writer;
-        	this.items = items;
-            mHandler = h;
-        }
-        
-        public void run() {
-        	writer.quickWrite(items);
-        	int state = QuickWriter.WRITE_READY;
-        	int newState = QuickWriter.WRITE_READY;
-        	for( int i=0; i<100; i++ ){
-        		try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				newState = writer.getSendState();
-        		if( state != newState ){
-        			state = newState;
-        			mHandler.sendEmptyMessage(state);
-        			i = 0; // 한 스텝마다 10초씩 기다릴 수 있다.
-        		}
-        		if( state == QuickWriter.WRITE_SUCCESS || state == QuickWriter.WRITE_FAIL || state == QuickWriter.WRITE_LOGIN_FAIL ){
-        			return;
-        		}
-        	}
-        	mHandler.sendEmptyMessage(QuickWriter.WRITE_FAIL);
-       }
-    }
-    
     // send
-    private Handler mHandler = new Handler() {
+    private Handler mHandler = new SyncHandler(); 
+    public class SyncHandler extends Handler {
     	private AlertDialog.Builder alert = null;
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
@@ -344,8 +322,6 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 				alert = new AlertDialog.Builder(activity);
 				alert.setTitle( "입력 성공" );
 				alert.setMessage( "저장되었습니다" );
-				SharedPreferences prefs = getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
-				updateRewriteView(prefs);
 				break;
 			case QuickWriter.WRITE_LOGIN_FAIL:
 				mProgressDialog.dismiss(); // ProgressDialog 종료
@@ -421,10 +397,14 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 
     @Override
     public void onTabChanged(String tabId) {
-    	if( tabId.equals("tab_test3") ){
+    	if( tabId.equals("tabNaverView") ){
     		WebView wb = (WebView)findViewById(R.id.naverView);
     		if( wb.willNotDraw() )
     			updateNaverView();
+    	}
+    	else if( tabId.equals("tabRewrite") ){
+			SharedPreferences prefs = getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
+			updateRewriteView(prefs);
     	}
    	    	
     }
@@ -472,6 +452,32 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 		}
 		WebView wb = (WebView)findViewById(R.id.naverView);
 		wb.loadUrl("https://nid.naver.com/nidlogin.login?svctype=262144&url=http://beta.moneybook.naver.com/m/view.nhn?method=monthly");
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	     if (keyCode == KeyEvent.KEYCODE_BACK && mTabHost.getCurrentTab() == 1 ) {
+	    	 Builder alert = new AlertDialog.Builder(this);
+	    	 alert.setTitle( "앱 종료" );
+	    	 alert.setMessage( "앱을 종료 합니까?" );
+	    	 alert.setPositiveButton(
+					 "종료", new DialogInterface.OnClickListener() {
+					    public void onClick( DialogInterface dialog, int which) {
+					    	finish();
+					    }
+					});
+	    	 alert.setNegativeButton( "네이버 뒤로 가기", new DialogInterface.OnClickListener() {
+					    public void onClick( DialogInterface dialog, int which) {
+					    	// 네이버 뒤로가기
+					    	WebView wb = (WebView)findViewById(R.id.naverView);
+					    	if( wb.canGoBack() )
+					    		wb.goBack();
+					    }
+					});
+			alert.show();
+	    	 return true;
+	     }
+	     return super.onKeyDown(keyCode, event);    
 	}
     
     private DatePickerDialog.OnDateSetListener mDateSetListener =
