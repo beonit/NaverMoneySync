@@ -14,7 +14,8 @@ public class NaverViewClient extends WebViewClient {
 	 */
 	private String id;
 	private String passwd;
-	private ProgressDialog mProgressDialog = null;
+	private ProgressDialog mProgressLoginDialog = null;
+	private ProgressDialog mProgressLoadingDialog = null;
 	
 	public NaverViewClient(String id, String passwd) {
 		this.id = id;
@@ -22,18 +23,26 @@ public class NaverViewClient extends WebViewClient {
 	}
 	
 	public void onPageStarted(WebView view, String url, Bitmap favicon){
-		if( view.willNotDraw() && mProgressDialog == null )
+		if( view.willNotDraw() && mProgressLoginDialog == null ){
 			try{
-				mProgressDialog = ProgressDialog.show(view.getContext(), "가계부 로딩", "로그인 페이지 로딩", false);
-				mProgressDialog.setCancelable(true);
+				mProgressLoginDialog = ProgressDialog.show(view.getContext(), "가계부 로딩", "로그인 페이지 로딩", false);
+				mProgressLoginDialog.setCancelable(true);
 			}catch(Exception e){
 				Log.e("beonit", "dialog error");
 				e.printStackTrace();
 			}
+		}else{
+			mProgressLoadingDialog = ProgressDialog.show(view.getContext(), "가계부 로딩", "웹페이지 로딩 중 입니다\n제기랄 3G 라면 좀 더 기다려주세요\n뒤로가기 버튼을 누르면 사라집니다.", false);
+			mProgressLoginDialog.setCancelable(true);
+		}
 	}
 	
 	public void onPageFinished(WebView view, String url){
 		Log.i("beonit", url);
+		if( mProgressLoadingDialog != null ){
+			mProgressLoadingDialog.dismiss();
+			mProgressLoadingDialog = null;
+		}
 		if( id == null || passwd == null || id.length() == 0 || passwd.length() == 0 )
 			return;
 		if( url.equals("https://nid.naver.com/nidlogin.login?svctype=262144&url=http://beta.moneybook.naver.com/m/view.nhn?method=monthly")){
@@ -42,17 +51,17 @@ public class NaverViewClient extends WebViewClient {
 			view.loadUrl("javascript:loginform.submit()");
 			MyJavaScriptInterface iJS = new MyJavaScriptInterface();
 			view.addJavascriptInterface(iJS, "HTMLOUT");
-			if( mProgressDialog != null )
-				mProgressDialog.setMessage("로그인 시도");
+			if( mProgressLoginDialog != null )
+				mProgressLoginDialog.setMessage("로그인 시도");
 		}
 		else if( url.equals("https://nid.naver.com/nidlogin.login?svctype=262144") ){
 			view.loadUrl("javascript:window.HTMLOUT.showHTML('' + document.body.getElementsByTagName('span')[3].innerHTML);");
-			if( mProgressDialog != null )
-				mProgressDialog.setMessage("로그인 처리");
+			if( mProgressLoginDialog != null )
+				mProgressLoginDialog.setMessage("로그인 처리");
 			view.setWillNotDraw(false);
 		}else if( url.contains("http://static.nid.naver.com/login/sso/finalize.nhn") ){
-			if( mProgressDialog != null )
-				mProgressDialog.setMessage("가계부 로딩 중");
+			if( mProgressLoginDialog != null )
+				mProgressLoginDialog.setMessage("가계부 로딩 중");
 		}else if( url.equals("http://beta.moneybook.naver.com/m/view.nhn?method=monthly") ){
 			// 정상 로딩 완료
 			closeDialog();
@@ -78,17 +87,17 @@ public class NaverViewClient extends WebViewClient {
 	}
 	
 	public void closeDialog(){
-		if( mProgressDialog != null ){
-			mProgressDialog.dismiss();
-			mProgressDialog = null;
+		if( mProgressLoginDialog != null ){
+			mProgressLoginDialog.dismiss();
+			mProgressLoginDialog = null;
 		}
 	}
 	
 	final class MyJavaScriptInterface {
 	    public void showHTML(String html) {
 	        if( html.contains("오류") ){
-	        	mProgressDialog.dismiss();
-	        	mProgressDialog = null;
+	        	mProgressLoginDialog.dismiss();
+	        	mProgressLoginDialog = null;
 	        }
 	    }  
 	}  
