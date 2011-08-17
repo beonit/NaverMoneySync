@@ -6,16 +6,15 @@ import android.os.Handler;
 
 public class ProgressThread extends Thread {
 	Handler mHandler;
-	QuickWriterNaver writer;
+	QuickWriter writer;
 	ArrayList<String> items;
-    ProgressThread(Handler h, QuickWriterNaver writer, ArrayList<String> items) {
+    ProgressThread(Handler h, QuickWriter writer, ArrayList<String> items) {
     	this.writer = writer;
     	this.items = items;
         mHandler = h;
     }
     
     public void run() {
-    	writer.quickWrite(items);
     	int state = QuickWriterNaver.WRITE_READY;
     	int newState = QuickWriterNaver.WRITE_READY;
     	for( int i=0; i<100; i++ ){

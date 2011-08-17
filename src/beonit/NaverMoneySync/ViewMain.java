@@ -292,9 +292,9 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
     	// send thread and dialog start
     	mProgressDialog = ProgressDialog.show(this, "가계부 쓰기", "3G는 더 기다려 주세요\n접속중...", false);
     	mProgressDialog.setCancelable(true);
-		QuickWriterNaver writer = new QuickWriterNaver(id, passwd, this);
+		QuickWriter writer = new QuickWriterIcash(id, passwd, this);
 		writer.setFailSave(failSave);
-		writer.setResultNoti(false);
+//		writer.setResultNoti(false);
 		progressThread = new ProgressThread(mHandler, writer, items);
 		progressThread.start();
 		return true;
@@ -309,7 +309,7 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 			case QuickWriterNaver.WRITE_READY:
 				mProgressDialog.setMessage("3G는 더 기다려 주세요\n접속 중...");
 				break;
-			case QuickWriterNaver.WRITE_LOGIN:
+			case QuickWriterNaver.WRITE_LOGIN_ATTEMPT:
 				mProgressDialog.setMessage("3G는 더 기다려 주세요\n로그인 페이지 로드");
 				break;
 			case QuickWriterNaver.WRITE_LOGIN_SUCCESS:

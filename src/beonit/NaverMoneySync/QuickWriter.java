@@ -22,7 +22,7 @@ public abstract class QuickWriter {
 	protected int writeState = WRITE_READY;
 	
 	public static final int WRITE_READY = 0;
-	public static final int WRITE_LOGIN = 1;
+	public static final int WRITE_LOGIN_ATTEMPT = 1;
 	public static final int WRITE_LOGIN_FAIL = 2;
 	public static final int WRITE_LOGIN_SUCCESS = 3;
 	public static final int WRITE_WRITING = 4;
