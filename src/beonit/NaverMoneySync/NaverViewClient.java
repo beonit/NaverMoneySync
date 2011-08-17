@@ -32,7 +32,6 @@ public class NaverViewClient extends WebViewClient {
 				e.printStackTrace();
 			}
 		}else if( !view.willNotDraw() && mProgressLoadingDialog == null && mProgressLoginDialog == null ){
-			Log.e("beonit", "loading dialog");
 			mProgressLoadingDialog = ProgressDialog.show(view.getContext(), "가계부 웹페이지 로딩", " 3G는 더 기다려 주세요\n뒤로가기 버튼을 누르면 사라집니다.", false);
 			mProgressLoadingDialog.setCancelable(true);
 		}

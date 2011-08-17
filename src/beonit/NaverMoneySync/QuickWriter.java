@@ -38,8 +38,7 @@ public class QuickWriter {
 	}
 	
 	public boolean quickWrite(String items){
-		this.items = items.replace("\n", " ");
-		mWebView.getSettings().setJavaScriptEnabled(true);
+		this.items = items;
 		mWebView.loadUrl("https://nid.naver.com/nidlogin.login?svctype=262144&url=http://beta.moneybook.naver.com/m/write.nhn?method=quick");
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.addJavascriptInterface(new MyJavaScriptInterface(), "HTMLOUT");
@@ -72,7 +71,9 @@ public class QuickWriter {
     		}
     		else if( url.equals("http://beta.moneybook.naver.com/m/write.nhn?method=quick") ){
     			Log.v("beonit", "write items : " + items);
+    			view.loadUrl("javascript:window.HTMLOUT.showHTML(items.value)");
     			view.loadUrl("javascript:items.value='"+ items +"'");
+    			view.loadUrl("javascript:window.HTMLOUT.showHTML(items.value)");
 	    		view.loadUrl("javascript:writeForm.submit()");
 	    		writeState = WRITE_WRITING;
     		}
@@ -86,7 +87,8 @@ public class QuickWriter {
     			view.destroy();
     			sendFail("가계부 약관동의 안됨");
     			writeState = WRITE_FAIL_REGISTER;
-    		}else{
+    		}
+    		else{
     			Log.e("boenit", "fail : " + url);
     			view.destroy();
     			sendFail("원인을 모름");
@@ -97,6 +99,7 @@ public class QuickWriter {
 	
 	final class MyJavaScriptInterface {
 	    public void showHTML(String html) {
+	    	Log.v("beonit", "show html : " + html);
 	        if( html.contains("오류") ){
 	        	writeState = WRITE_LOGIN_FAIL;
 	        	sendFail("로그인 실패");

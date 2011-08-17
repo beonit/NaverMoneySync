@@ -35,12 +35,14 @@ public class SmsReceiver extends BroadcastReceiver {
 				Log.v("beonit", "bundle == null");
 				return ;
 			}
+			Log.i("beonit", "get bundle pass");
 			
 			Object[] pdusObj = (Object[])bundle.get("pdus");
 			if (pdusObj == null) {
 				Log.v("beonit", "pdusObj == null");
 				return ;
 			}
+			Log.i("beonit", "pdusObj pass");
 			
 			SmsMessage[] messages = new SmsMessage[pdusObj.length];
 		    for(int i = 0; i < pdusObj.length; i++) {
@@ -51,15 +53,22 @@ public class SmsReceiver extends BroadcastReceiver {
 		    	Log.v("beonit", "msg len : " + messages.length ); 
 		    	return;
 		    }
+		    Log.i("beonit", "msg len pass");
 		    
 		    // 여러개의 sms가 동시에 올 경우를 생각한다.
 		    String items = new String("");
 		    for( SmsMessage msg : messages ) {
 		        if( !isCardSender( msg.getOriginatingAddress() ) )
-		        	return;
+		        	continue;
 		        Log.v("beonit", "sender : " + msg.getOriginatingAddress());
+		        Log.v("beonit", "msg : " + msg.getDisplayMessageBody());
 		        items = items + msg.getDisplayMessageBody() + ";";
 		    }
+		    if( items == null || items.length() == 0 )
+		    	return;
+		    Log.i("beonit", "items pass");
+		    items = items.replace("\n", " ");
+		    items = items.replace("\r", " ");
 		    
 		    // load failed saved pref
 			SharedPreferences prefs = context.getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
@@ -91,7 +100,7 @@ public class SmsReceiver extends BroadcastReceiver {
 			    ed.commit();
 		    	return;
 			}else if(!checkNetwork(context)){
-				Log.i("beonit", "id/pw 정보 없음");
+				Log.i("beonit", "네트워크 안됨");
 		    	Notification notification = new Notification(R.drawable.icon, "인터넷 사용 불가", 0);
 		    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
 		    	Intent failIntent = new Intent(context, ViewMain.class);
@@ -115,6 +124,7 @@ public class SmsReceiver extends BroadcastReceiver {
 		    QuickWriter writer = new QuickWriter(id, passwd, context);
 			writer.setFailSave(true);
 			writer.setResultNoti(true);
+			Log.i("beonit", "ProgressThread " + items);
 		    ProgressThread progressThread = new ProgressThread(mHandler, writer, items);
 			progressThread.start();
 			return;
@@ -123,6 +133,7 @@ public class SmsReceiver extends BroadcastReceiver {
 
 	private boolean isCardSender(String sender ) {
 		ArrayList<String> nums = new ArrayList<String>();
+		nums.add("01094858469"); // test
 		nums.add("01094784068"); // test
 		nums.add("15888900");    // SAMSUNG
 		nums.add("15888700");    // SAMSUNG
@@ -242,5 +253,5 @@ public class SmsReceiver extends BroadcastReceiver {
 //			}
 		}
 	};
-    
+	
 }
