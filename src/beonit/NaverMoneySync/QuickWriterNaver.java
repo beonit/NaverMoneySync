@@ -47,10 +47,8 @@ public class QuickWriterNaver extends QuickWriter {
     		else if( url.equals("http://beta.moneybook.naver.com/m/write.nhn?method=quick") ){
     			String writeString = "";
     			for( String item : items ){
-    				Log.v("beonit", "write item : " + item);
     				writeString = writeString + item + ";";
     			}
-    			Log.v("beonit", "write item : " + writeString);
     			if( writeString.length() == 0 )
     				return;
     			view.loadUrl("javascript:window.HTMLOUT.showHTML(items.value)");

@@ -8,7 +8,7 @@ import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-public class NaverViewClient extends WebViewClient {
+public class WebViewClientNaver extends WebViewClient {
 	/**
 	 * 
 	 */
@@ -17,7 +17,7 @@ public class NaverViewClient extends WebViewClient {
 	private ProgressDialog mProgressLoginDialog = null;
 	private ProgressDialog mProgressLoadingDialog = null;
 	
-	public NaverViewClient(String id, String passwd) {
+	public WebViewClientNaver(String id, String passwd) {
 		this.id = id;
 		this.passwd = passwd;
 	}

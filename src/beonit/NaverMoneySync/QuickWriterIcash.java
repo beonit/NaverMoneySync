@@ -19,37 +19,42 @@ public class QuickWriterIcash extends QuickWriter {
 	
 	public boolean quickWrite(ArrayList<String> items){
 		super.quickWrite(items, "http://m.icashhouse.co.kr");
-        mWebView.addJavascriptInterface(new JSInterfaceICash(), "HTMLOUT");
+		mWebView.addJavascriptInterface(new JSInterfaceICash(), "HTMLOUT");
+		mWebView.setWillNotDraw(true);
         return true;
 	}
 	
 	class ICashViewClient extends WebViewClient{
     	@Override
     	public void onPageFinished(WebView view, String url){
-    		Log.i("beonit", url);
-    		if( url.equals("http://m.icashhouse.co.kr")){
+    		Log.i("beonit", "onPageFinished : " + url);
+    		if( url.equals("http://m.icashhouse.co.kr/")){
     			switch( writeState ){
     			case WRITE_READY:
-        			Log.v("beonit", "page load, login attempt");
-    	    		view.loadUrl("javascript:Username.value='"+ id +"'");
-    	    		view.loadUrl("javascript:Password.value='"+ passwd +"'");
-    	    		view.loadUrl("javascript:window.HTMLOUT.loginResult( check_login(document.getElementById('frm_login'))");
-    	    		writeState = WRITE_LOGIN_ATTEMPT;
+        			Log.v("beonit", "onPageFinished, WRITE_READY");
+    				view.loadUrl("javascript:Username.value='" + "beonit" + "'");
+    				view.loadUrl("javascript:Password.value='" + "akdma59" + "'");
+    				view.loadUrl("javascript:login.submit( check_login( document.getElementById('frm_login') ) )");
+    				writeState = QuickWriter.WRITE_LOGIN_ATTEMPT;
     				break;
     			case WRITE_LOGIN_ATTEMPT:
-    				view.loadUrl("javascript:window.HTMLOUT.checkLogin( document.getElementById('private').innerHTML );");
-    				break;
-    			case WRITE_LOGIN_SUCCESS:
-    				view.loadUrl("http://m.icashhouse.co.kr/tra_insert.php");
+    				Log.v("beonit", "onPageFinished, WRITE_LOGIN_ATTEMPT");
+    				view.loadUrl("javascript:window.HTMLOUT.checkLoginResult( document.getElementById('others').innerHTML );");
     				break;
     			}
     		}
     		else if( url.equals("http://m.icashhouse.co.kr/tra_insert.php") ){
-    			view.loadUrl("javascript:date_r_.value=" + "2011-08-18" );
-    			view.loadUrl("javascript:item.value=" + items.get(0) );
-    			view.loadUrl("javascript:money.value=" + 100 );
-    			view.loadUrl("javascript:window.HTMLOUT.checkInsert('', document.getElementsByName('insert')[0])");
-    			writeState = WRITE_WRITING;
+    			switch(writeState){
+    			case WRITE_LOGIN_SUCCESS:
+        			view.loadUrl("javascript:date_r_.value=" + "2011-08-18" );
+        			view.loadUrl("javascript:item.value=" + items.get(0) );
+        			view.loadUrl("javascript:money.value=" + 100 );
+        			view.loadUrl("javascript:insert.submit( check_insert('', document.getElementsByName('insert')[0] ) )");
+        			writeState = WRITE_WRITING;
+        			break;    	
+    			case WRITE_WRITING:
+    				writeState = WRITE_SUCCESS;
+    			}
     		}
     		else{
     			Log.e("boenit", "fail : " + url);
@@ -61,27 +66,24 @@ public class QuickWriterIcash extends QuickWriter {
     }
 	
 	final class JSInterfaceICash {
-		public void loginResult(String result){
-			Log.i("beonit", "loginResult " + result );
-			if( result.equals("false") ){
-				
-			}
-		}
 		
-		public void checkInsert(String html){
-			Log.i("beonit", "checkInsert : " + html);
-		}
-		
-		public void checkLogin(String html){
+		public void checkLoginResult(final String html){
 			Log.i("beonit", "checkLogin : " + html);
-			if( html.contains(id) )
+			if( html.contains("기타설정") ){
 				writeState = WRITE_LOGIN_SUCCESS;
-			else
+				mWebView.loadUrl("http://m.icashhouse.co.kr/tra_insert.php");
+			}
+			else{
 				writeState = WRITE_LOGIN_FAIL;
+			}
 			return;
 		}
 		
-	    public void showHTML(String html) {
+		public void checkInsert(final String html){
+			Log.i("beonit", "checkInsert : " + html);
+		}
+
+		public void showHTML(final String html) {
 	    	Log.i("beonit", "show html : " + html);
 	        if( html.contains("오류") ){
 	        	writeState = WRITE_LOGIN_FAIL;
