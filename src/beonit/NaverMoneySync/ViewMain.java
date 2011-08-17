@@ -1,5 +1,6 @@
 package beonit.NaverMoneySync;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.app.AlertDialog;
@@ -88,7 +89,7 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 		String id = prefs.getString("naverID", null);
 		String passwd = prefs.getString("naverPasswd", null);
 		if( id == null || passwd == null || id.length() == 0 || passwd.length() == 0 ){
-			Intent intent = new Intent(this, AccountSetting.class);
+			Intent intent = new Intent(this, ViewAccountSetting.class);
         	startActivityForResult(intent, 100);
 		}
 		else
@@ -141,11 +142,11 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
         case MENU_ACCOUNT_SETTING:
         	WebView wb = (WebView)findViewById(R.id.naverView);
         	wb.setWillNotDraw(true);
-        	intent = new Intent(this, AccountSetting.class);
+        	intent = new Intent(this, ViewAccountSetting.class);
         	startActivityForResult(intent, 0);
         	return true;
         case MENU_ABOUT:
-        	intent = new Intent(this, Developer.class);
+        	intent = new Intent(this, ViewDeveloper.class);
         	startActivity(intent);
         	return true;
         default:
@@ -171,8 +172,8 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 
     public void onSubmitRewrite(View view){
     	SharedPreferences prefs = getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
-        String items = prefs.getString("items", "");
-    	if( items.length() == 0 ){
+    	String failStrs = prefs.getString("items", null);
+    	if( failStrs == null ){
     		AlertDialog.Builder alert = new AlertDialog.Builder(this);
 			alert.setTitle( "내용 없음" );
 			alert.setMessage( "재전송할 내용이 없습니다" );
@@ -185,6 +186,9 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 			alert.show();
 			return;
     	}
+    	ArrayList<String> items = new ArrayList<String>();
+    	for( String item : failStrs.split(";") )
+    		items.add(item);
     	if( doSubmit(items, true) ){
     		Editor ed = prefs.edit();
         	ed.putString("items", "");
@@ -233,17 +237,18 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 		// 날짜 v 사용내역 v 카드 or 현금 v 금액 (v=공백)
 		String contents = editText.getText().toString();
 		contents.replace(" ", "");
-		String items = new String( new StringBuilder().append(mMonth+1).append("/")
+		ArrayList<String> items = new ArrayList<String>();
+		items.add( new String( new StringBuilder().append(mMonth+1).append("/")
 								.append(mDay).append(" ")
 								.append(contents).append(" ")
 								.append("현금 ")
 								.append(editMoney.getText()).append("원")
-								);
+								) );
 
 		return doSubmit(items, false);
     }
     
-    public boolean doSubmit(String items, boolean failSave ){
+    public boolean doSubmit(ArrayList<String> items, boolean failSave ){
 		String id, passwd;
     	// 네이버 계정 설정
     	SharedPreferences prefs = getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
@@ -265,7 +270,7 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 					    }
 					});
 			alert.show();
-			this.startActivity( new Intent(this, AccountSetting.class ));
+			this.startActivity( new Intent(this, ViewAccountSetting.class ));
 			return false;
 		}
 		
@@ -287,7 +292,7 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
     	// send thread and dialog start
     	mProgressDialog = ProgressDialog.show(this, "가계부 쓰기", "3G는 더 기다려 주세요\n접속중...", false);
     	mProgressDialog.setCancelable(true);
-		QuickWriter writer = new QuickWriter(id, passwd, this);
+		QuickWriterNaver writer = new QuickWriterNaver(id, passwd, this);
 		writer.setFailSave(failSave);
 		writer.setResultNoti(false);
 		progressThread = new ProgressThread(mHandler, writer, items);
@@ -301,47 +306,47 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
     	private AlertDialog.Builder alert = null;
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
-			case QuickWriter.WRITE_READY:
+			case QuickWriterNaver.WRITE_READY:
 				mProgressDialog.setMessage("3G는 더 기다려 주세요\n접속 중...");
 				break;
-			case QuickWriter.WRITE_LOGIN:
+			case QuickWriterNaver.WRITE_LOGIN:
 				mProgressDialog.setMessage("3G는 더 기다려 주세요\n로그인 페이지 로드");
 				break;
-			case QuickWriter.WRITE_LOGIN_SUCCESS:
+			case QuickWriterNaver.WRITE_LOGIN_SUCCESS:
 				mProgressDialog.setMessage("3G는 더 기다려 주세요\n입력 페이지 로드");
 				break;
-			case QuickWriter.WRITE_WRITING:
+			case QuickWriterNaver.WRITE_WRITING:
 				mProgressDialog.setMessage("3G는 더 기다려 주세요\n가계부 내용 입력 ");
 				break;
-			case QuickWriter.WRITE_SUCCESS:
+			case QuickWriterNaver.WRITE_SUCCESS:
 				mProgressDialog.dismiss(); // ProgressDialog 종료
+				alert = new AlertDialog.Builder(activity);
+				alert.setTitle( "입력 성공" );
+				alert.setMessage( "저장되었습니다" );
 		    	EditText editText = (EditText)findViewById(R.id.EditTextRecordContents);
 		    	EditText editMoney = (EditText)findViewById(R.id.EditTextRecordMoney);
 				editText.setText("");
 				editMoney.setText("");
-				alert = new AlertDialog.Builder(activity);
-				alert.setTitle( "입력 성공" );
-				alert.setMessage( "저장되었습니다" );
 				break;
-			case QuickWriter.WRITE_LOGIN_FAIL:
+			case QuickWriterNaver.WRITE_LOGIN_FAIL:
 				mProgressDialog.dismiss(); // ProgressDialog 종료
 				alert = new AlertDialog.Builder(activity);
 				alert.setTitle( "로그인 실패" );
 				alert.setMessage( "아이디 암호를 확인해 주세요" );
 				break;
-			case QuickWriter.WRITE_FAIL:
+			case QuickWriterNaver.WRITE_FAIL:
 				mProgressDialog.dismiss(); // ProgressDialog 종료
 				alert = new AlertDialog.Builder(activity);
 				alert.setTitle( "쓰기 실패" );
 				alert.setMessage( "다시 시도해 주세요 \n전송 실패함에 저장되지 않습니다." );
 				break;
-			case QuickWriter.WRITE_FAIL_REGISTER:
+			case QuickWriterNaver.WRITE_FAIL_REGISTER:
 				mProgressDialog.dismiss(); // ProgressDialog 종료
 				alert = new AlertDialog.Builder(activity);
 				alert.setTitle( "가계부 가입 안됨" );
 				alert.setMessage( "현재 앱을 닫고 모바일 웹/PC 로 먼저 약관동의를 처리하고 접속해 주세요." );
 				break;
-			case QuickWriter.TIME_OUT:
+			case QuickWriterNaver.TIME_OUT:
 				mProgressDialog.dismiss(); // ProgressDialog 종료
 				alert = new AlertDialog.Builder(activity);
 				alert.setTitle( "쓰기 실패" );
@@ -351,6 +356,11 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 				break;
 			}
 			if( alert != null ){
+				// 성공 팝업이 여러번 뜨는 경우가 있다. 그런 경우를 위한 방어 코드
+		    	EditText editText = (EditText)findViewById(R.id.EditTextRecordContents);
+		    	if( editText.getText().length() == 0 )
+		    		return;
+		    	// 팝업 띄우기
 				alert.setPositiveButton(
 					 "닫기", new DialogInterface.OnClickListener() {
 					    public void onClick( DialogInterface dialog, int which) {
@@ -361,7 +371,7 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 			}
 		}
 	};
-    
+	
     // check network        
     public boolean checkNetwork() 
     {

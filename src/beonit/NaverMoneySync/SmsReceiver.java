@@ -56,23 +56,25 @@ public class SmsReceiver extends BroadcastReceiver {
 		    Log.i("beonit", "msg len pass");
 		    
 		    // 여러개의 sms가 동시에 올 경우를 생각한다.
-		    String items = new String("");
+		    ArrayList<String> items = new ArrayList<String>();
 		    for( SmsMessage msg : messages ) {
 		        if( !isCardSender( msg.getOriginatingAddress() ) )
 		        	continue;
 		        Log.v("beonit", "sender : " + msg.getOriginatingAddress());
 		        Log.v("beonit", "msg : " + msg.getDisplayMessageBody());
-		        items = items + msg.getDisplayMessageBody() + ";";
+		        items.add( msg.getDisplayMessageBody().replace("\n", " ").replace("\r", " ") );
 		    }
-		    if( items == null || items.length() == 0 )
+		    if( items.size() == 0 )
 		    	return;
-		    Log.i("beonit", "items pass");
-		    items = items.replace("\n", " ");
-		    items = items.replace("\r", " ");
 		    
-		    // load failed saved pref
+		    // 이미 실패한 문자를 로드해서 한번의 통신에 한번에 쓴다.
 			SharedPreferences prefs = context.getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
-			items = items + prefs.getString("items", "");
+			String failsStr = prefs.getString("items", null);
+			if( failsStr != null ){
+				for( String fail : failsStr.split(";") )
+					items.add(fail);
+			}
+			
 			String id = prefs.getString("naverID", null);
 			String passwd = null;
 			try {
@@ -95,8 +97,11 @@ public class SmsReceiver extends BroadcastReceiver {
 				NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 		    	nm.notify(ViewMain.NOTI_ID, notification);
 		    	// update saved preference
-		    	Log.e("beonit", "saved items" + items);
-		    	ed.putString("items", items);
+		    	failsStr = "";
+		    	for( String item : items )
+		    		failsStr = failsStr + item + ";";
+		    	Log.e("beonit", "saved items" + failsStr);
+		    	ed.putString("items", failsStr);
 			    ed.commit();
 		    	return;
 			}else if(!checkNetwork(context)){
@@ -110,8 +115,11 @@ public class SmsReceiver extends BroadcastReceiver {
 				NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 		    	nm.notify(ViewMain.NOTI_ID, notification);
 		    	// update saved preference
-		    	Log.e("beonit", "saved items" + items);
-		    	ed.putString("items", items);
+		    	failsStr = "";
+		    	for( String item : items )
+		    		failsStr = failsStr + item + ";";
+		    	Log.e("beonit", "saved items" + failsStr);
+		    	ed.putString("items", failsStr);
 			    ed.commit();
 			    return;
 			}else{
@@ -121,7 +129,7 @@ public class SmsReceiver extends BroadcastReceiver {
 			}
 		    
 		    // 전송
-		    QuickWriter writer = new QuickWriter(id, passwd, context);
+		    QuickWriterNaver writer = new QuickWriterNaver(id, passwd, context);
 			writer.setFailSave(true);
 			writer.setResultNoti(true);
 			Log.i("beonit", "ProgressThread " + items);
@@ -193,65 +201,30 @@ public class SmsReceiver extends BroadcastReceiver {
         return result;
     }
     
- // send
+    // send
     private Handler mHandler = new SyncHandler(); 
     public class SyncHandler extends Handler {
-//    	private AlertDialog.Builder alert = null;
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
-			case QuickWriter.WRITE_READY:
-//				mProgressDialog.setMessage("접속 중...");
+			case QuickWriterNaver.WRITE_READY:
 				break;
-			case QuickWriter.WRITE_LOGIN:
-//				mProgressDialog.setMessage("로그인 페이지 로드");
+			case QuickWriterNaver.WRITE_LOGIN:
 				break;
-			case QuickWriter.WRITE_LOGIN_SUCCESS:
-//				mProgressDialog.setMessage("로그인 성공");
+			case QuickWriterNaver.WRITE_LOGIN_SUCCESS:
 				break;
-			case QuickWriter.WRITE_WRITING:
-//				mProgressDialog.setMessage("가계부 내용 입력 ");
+			case QuickWriterNaver.WRITE_WRITING:
 				break;
-			case QuickWriter.WRITE_SUCCESS:
-//				mProgressDialog.dismiss(); // ProgressDialog 종료
-//		    	EditText editText = (EditText)findViewById(R.id.EditTextRecordContents);
-//		    	EditText editMoney = (EditText)findViewById(R.id.EditTextRecordMoney);
-//				editText.setText("");
-//				editMoney.setText("");
-//				alert = new AlertDialog.Builder(activity);
-//				alert.setTitle( "입력 성공" );
-//				alert.setMessage( "저장되었습니다" );
+			case QuickWriterNaver.WRITE_SUCCESS:
 				break;
-			case QuickWriter.WRITE_LOGIN_FAIL:
-//				mProgressDialog.dismiss(); // ProgressDialog 종료
-//				alert = new AlertDialog.Builder(activity);
-//				alert.setTitle( "로그인 실패" );
-//				alert.setMessage( "아이디 암호를 확인해 주세요" );
+			case QuickWriterNaver.WRITE_LOGIN_FAIL:
 				break;
-			case QuickWriter.WRITE_FAIL:
-//				mProgressDialog.dismiss(); // ProgressDialog 종료
-//				alert = new AlertDialog.Builder(activity);
-//				alert.setTitle( "쓰기 실패" );
-//				alert.setMessage( "다시 시도해 주세요 \n전송 실패함에 저장되지 않습니다." );
+			case QuickWriterNaver.WRITE_FAIL:
 				break;
-			case QuickWriter.WRITE_FAIL_REGISTER:
-//				mProgressDialog.dismiss(); // ProgressDialog 종료
-//				alert = new AlertDialog.Builder(activity);
-//				alert.setTitle( "가계부 가입 안됨" );
-//				alert.setMessage( "현재 앱을 닫고 모바일 웹/PC 로 먼저 약관동의를 처리하고 접속해 주세요." );
+			case QuickWriterNaver.WRITE_FAIL_REGISTER:
 				break;
 			default:
 				break;
 			}
-//			if( alert != null ){
-//				alert.setPositiveButton(
-//					 "닫기", new DialogInterface.OnClickListener() {
-//					    public void onClick( DialogInterface dialog, int which) {
-//					        dialog.dismiss();   //닫기
-//					    }
-//					});
-//				alert.show();
-//			}
 		}
 	};
-	
 }

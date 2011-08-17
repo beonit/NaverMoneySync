@@ -1,12 +1,14 @@
 package beonit.NaverMoneySync;
 
+import java.util.ArrayList;
+
 import android.os.Handler;
 
 public class ProgressThread extends Thread {
 	Handler mHandler;
-	QuickWriter writer;
-	String items;
-    ProgressThread(Handler h, QuickWriter writer, String items) {
+	QuickWriterNaver writer;
+	ArrayList<String> items;
+    ProgressThread(Handler h, QuickWriterNaver writer, ArrayList<String> items) {
     	this.writer = writer;
     	this.items = items;
         mHandler = h;
@@ -14,8 +16,8 @@ public class ProgressThread extends Thread {
     
     public void run() {
     	writer.quickWrite(items);
-    	int state = QuickWriter.WRITE_READY;
-    	int newState = QuickWriter.WRITE_READY;
+    	int state = QuickWriterNaver.WRITE_READY;
+    	int newState = QuickWriterNaver.WRITE_READY;
     	for( int i=0; i<100; i++ ){
     		try {
 				Thread.sleep(100);
@@ -30,12 +32,12 @@ public class ProgressThread extends Thread {
     			i = 0; // 한 스텝마다 10초씩 기다릴 수 있다.
     		}else
     			continue;
-    		if( state == QuickWriter.WRITE_SUCCESS || state == QuickWriter.WRITE_FAIL || state == QuickWriter.WRITE_LOGIN_FAIL || state == QuickWriter.WRITE_FAIL_REGISTER ){
+    		if( state == QuickWriterNaver.WRITE_SUCCESS || state == QuickWriterNaver.WRITE_FAIL || state == QuickWriterNaver.WRITE_LOGIN_FAIL || state == QuickWriterNaver.WRITE_FAIL_REGISTER ){
     			return;
     		}
     	}
     	if( mHandler != null ){
-    		mHandler.sendEmptyMessage(QuickWriter.TIME_OUT);
+    		mHandler.sendEmptyMessage(QuickWriterNaver.TIME_OUT);
     	}
    }
 }

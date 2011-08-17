@@ -18,10 +18,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Developer"
+        <activity android:name=".ViewDeveloper"
                   android:label="@string/app_name">
         </activity>
-        <activity android:name=".AccountSetting"
+        <activity android:name=".ViewAccountSetting"
                   android:label="@string/app_name">
         </activity>
 		<receiver android:name="SmsReceiver" android:enabled="true">
@@ -29,6 +29,5 @@
 				<action android:name="android.provider.Telephony.SMS_RECEIVED" />
 			</intent-filter>
 		</receiver>
-    <activity android:name="LoginTest"></activity>
 </application>
 </manifest> 
