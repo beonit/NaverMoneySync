@@ -208,7 +208,7 @@ public class SmsReceiver extends BroadcastReceiver {
 			switch (msg.what) {
 			case QuickWriterNaver.WRITE_READY:
 				break;
-			case QuickWriterNaver.WRITE_LOGIN:
+			case QuickWriterNaver.WRITE_LOGIN_ATTEMPT:
 				break;
 			case QuickWriterNaver.WRITE_LOGIN_SUCCESS:
 				break;

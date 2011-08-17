@@ -309,7 +309,7 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 			case QuickWriterNaver.WRITE_READY:
 				mProgressDialog.setMessage("3G는 더 기다려 주세요\n접속 중...");
 				break;
-			case QuickWriterNaver.WRITE_LOGIN:
+			case QuickWriterNaver.WRITE_LOGIN_ATTEMPT:
 				mProgressDialog.setMessage("3G는 더 기다려 주세요\n로그인 페이지 로드");
 				break;
 			case QuickWriterNaver.WRITE_LOGIN_SUCCESS:
