@@ -240,7 +240,7 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 		ArrayList<String> items = new ArrayList<String>();
 		items.add( new String( new StringBuilder().append(mMonth+1).append("/")
 								.append(mDay).append(" ")
-								.append(contents).append(" ")
+								.append(contents).append("  ")
 								.append("Çö±Ý ")
 								.append(editMoney.getText()).append("¿ø")
 								) );
