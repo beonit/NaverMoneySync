@@ -287,9 +287,18 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
     	// send thread and dialog start
     	mProgressDialog = ProgressDialog.show(this, "가계부 쓰기", "3G는 더 기다려 주세요\n접속중...", false);
     	mProgressDialog.setCancelable(true);
-    	QuickWriterIcash writer = new QuickWriterIcash(id, passwd, this);
-		writer.setFailSave(failSave);
-		writer.setResultNoti(false);
+    	QuickWriter writer;
+    	if( targetSite == TARGET_SITE.TARGET_ICACH ){
+    		QuickWriterIcash iCashWriter = new QuickWriterIcash(id, passwd, this);
+    		iCashWriter.setFailSave(failSave);
+    		iCashWriter.setResultNoti(false);
+    		writer = iCashWriter;
+    	}else{
+    		QuickWriterNaver naverWriter = new QuickWriterNaver(id, passwd, this);
+    		naverWriter.setFailSave(failSave);
+    		naverWriter.setResultNoti(false);
+    		writer = naverWriter;
+    	}
 		progressThread = new ProgressThread(mHandler, writer, items);
 		progressThread.start();
 		return true;
@@ -459,7 +468,7 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 		}
 		WebView wb = (WebView)findViewById(R.id.naverView);
 		if( targetSite == TARGET_SITE.TARGET_NAVER )
-			wb.loadUrl("https://nid.naver.com/nidlogin.login?svctype=262144&url=http://beta.moneybook.naver.com/m/write.nhn?method=quick");
+			wb.loadUrl("https://nid.naver.com/nidlogin.login?svctype=262144&url=http://beta.moneybook.naver.com/m/view.nhn?method=monthly");
 		else
 			wb.loadUrl("http://m.icashhouse.co.kr/");
 	}
