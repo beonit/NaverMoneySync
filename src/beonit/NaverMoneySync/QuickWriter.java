@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.webkit.WebView;
 
 public abstract class QuickWriter {
@@ -31,11 +32,16 @@ public abstract class QuickWriter {
 	public static final int WRITE_FAIL_REGISTER = 7;
 	public static final int TIME_OUT = 8;
 
-	public boolean quickWrite(ArrayList<String> items, String url) {
+	public boolean quickWrite(ArrayList<String> items) {
+		Log.e("beonit", "this is interface method for override");
+		return false;
+	}
+	
+	protected void quickWrite(ArrayList<String> items, String url) {
 		this.items = items;
+		mWebView.setWillNotDraw(true);
 		mWebView.loadUrl(url);
         mWebView.getSettings().setJavaScriptEnabled(true);
-		return true;
 	}
 
 	public int getSendState() {

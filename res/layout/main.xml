@@ -76,7 +76,8 @@
 			  android:layout_width="fill_parent" android:layout_height="fill_parent"
 			  android:id="@+id/viewNaver">
 			  	 <WebView 
-				  android:id="@+id/naverView" 
+				  android:id="@+id/naverView"
+				  android:scrollbars="none" 
 				  android:layout_width="fill_parent"  
 				  android:layout_height="fill_parent"/>
 			</LinearLayout>

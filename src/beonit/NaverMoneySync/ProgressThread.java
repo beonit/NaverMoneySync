@@ -6,9 +6,9 @@ import android.os.Handler;
 
 public class ProgressThread extends Thread {
 	Handler mHandler;
-	QuickWriterNaver writer;
+	QuickWriter writer;
 	ArrayList<String> items;
-    ProgressThread(Handler h, QuickWriterNaver writer, ArrayList<String> items) {
+    ProgressThread(Handler h, QuickWriter writer, ArrayList<String> items) {
     	this.writer = writer;
     	this.items = items;
         mHandler = h;

@@ -23,7 +23,6 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -36,6 +35,9 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
     /** Called when the activity is first created. */
 	
 	final static int NOTI_ID = 1159;
+	
+	private enum TARGET_SITE { TARGET_NAVER, TARGET_ICACH };
+	TARGET_SITE targetSite = TARGET_SITE.TARGET_NAVER;
 	
 	TabHost mTabHost = null;
 	@Override
@@ -104,21 +106,15 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 	}
 
 	
-	public class MyWebChromeClient extends WebChromeClient {
-		@Override
-		public void onProgressChanged(WebView view, int newProgress) {
-			ViewMain.this.setProgress(newProgress * 100);
-		}
-	}
-	
 	private void startNaverView(SharedPreferences prefs) {
 		// webview setting
         WebView wb = (WebView)findViewById(R.id.naverView);
         wb.setWillNotDraw( true );
         try {
-        	wb.setWebChromeClient(new MyWebChromeClient());
-			wb.setWebViewClient( new NaverViewClient(prefs.getString("naverID", null), SimpleCrypto.decrypt("SECGAL", prefs.getString("naverPasswd", null) ) ));
-			
+        	if( targetSite == TARGET_SITE.TARGET_NAVER )
+        		wb.setWebViewClient( new WebViewClientNaver(prefs.getString("naverID", null), SimpleCrypto.decrypt("SECGAL", prefs.getString("naverPasswd", null) ) ));
+        	else
+        		wb.setWebViewClient( new WebViewClientIcash( prefs.getString("naverID", null), SimpleCrypto.decrypt("SECGAL", prefs.getString("naverPasswd", null) ) ));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;
@@ -244,7 +240,6 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 								.append("현금 ")
 								.append(editMoney.getText()).append("원")
 								) );
-
 		return doSubmit(items, false);
     }
     
@@ -292,9 +287,18 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
     	// send thread and dialog start
     	mProgressDialog = ProgressDialog.show(this, "가계부 쓰기", "3G는 더 기다려 주세요\n접속중...", false);
     	mProgressDialog.setCancelable(true);
-		QuickWriterNaver writer = new QuickWriterNaver(id, passwd, this);
-		writer.setFailSave(failSave);
-		writer.setResultNoti(false);
+    	QuickWriter writer;
+    	if( targetSite == TARGET_SITE.TARGET_ICACH ){
+    		QuickWriterIcash iCashWriter = new QuickWriterIcash(id, passwd, this);
+    		iCashWriter.setFailSave(failSave);
+    		iCashWriter.setResultNoti(false);
+    		writer = iCashWriter;
+    	}else{
+    		QuickWriterNaver naverWriter = new QuickWriterNaver(id, passwd, this);
+    		naverWriter.setFailSave(failSave);
+    		naverWriter.setResultNoti(false);
+    		writer = naverWriter;
+    	}
 		progressThread = new ProgressThread(mHandler, writer, items);
 		progressThread.start();
 		return true;
@@ -356,10 +360,6 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 				break;
 			}
 			if( alert != null ){
-				// 성공 팝업이 여러번 뜨는 경우가 있다. 그런 경우를 위한 방어 코드
-		    	EditText editText = (EditText)findViewById(R.id.EditTextRecordContents);
-		    	if( editText.getText().length() == 0 )
-		    		return;
 		    	// 팝업 띄우기
 				alert.setPositiveButton(
 					 "닫기", new DialogInterface.OnClickListener() {
@@ -467,7 +467,10 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 			return;
 		}
 		WebView wb = (WebView)findViewById(R.id.naverView);
-		wb.loadUrl("https://nid.naver.com/nidlogin.login?svctype=262144&url=http://beta.moneybook.naver.com/m/view.nhn?method=monthly");
+		if( targetSite == TARGET_SITE.TARGET_NAVER )
+			wb.loadUrl("https://nid.naver.com/nidlogin.login?svctype=262144&url=http://beta.moneybook.naver.com/m/view.nhn?method=monthly");
+		else
+			wb.loadUrl("http://m.icashhouse.co.kr/");
 	}
 	
 	@Override
