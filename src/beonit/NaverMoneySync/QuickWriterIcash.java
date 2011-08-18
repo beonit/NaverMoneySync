@@ -32,10 +32,11 @@ public class QuickWriterIcash extends QuickWriter {
     			switch( writeState ){
     			case WRITE_READY:
         			Log.v("beonit", "onPageFinished, WRITE_READY");
-    				view.loadUrl("javascript:Username.value='" + "beonit" + "'");
-    				view.loadUrl("javascript:Password.value='" + "akdma59" + "'");
+    				view.loadUrl("javascript:Username.value='" + id + "'");
+    				view.loadUrl("javascript:Password.value='" + passwd + "'");
     				view.loadUrl("javascript:login.submit( check_login( document.getElementById('frm_login') ) )");
     				writeState = QuickWriter.WRITE_LOGIN_ATTEMPT;
+    				view.reload();
     				break;
     			case WRITE_LOGIN_ATTEMPT:
     				Log.v("beonit", "onPageFinished, WRITE_LOGIN_ATTEMPT");
@@ -51,10 +52,11 @@ public class QuickWriterIcash extends QuickWriter {
         			view.loadUrl("javascript:money.value=" + 100 );
         			view.loadUrl("javascript:insert.submit( check_insert('', document.getElementsByName('insert')[0] ) )");
         			writeState = WRITE_WRITING;
-        			break;    	
+        			break;
     			case WRITE_WRITING:
     				writeState = WRITE_SUCCESS;
     			}
+    			sendSuccess();
     		}
     		else{
     			Log.e("boenit", "fail : " + url);
@@ -78,18 +80,6 @@ public class QuickWriterIcash extends QuickWriter {
 			}
 			return;
 		}
-		
-		public void checkInsert(final String html){
-			Log.i("beonit", "checkInsert : " + html);
-		}
-
-		public void showHTML(final String html) {
-	    	Log.i("beonit", "show html : " + html);
-	        if( html.contains("오류") ){
-	        	writeState = WRITE_LOGIN_FAIL;
-	        	sendFail("로그인 실패");
-	        }
-	    }  
 	}
 	
 	///////////////////////////////////////////////////////////////////////////////////
@@ -113,7 +103,7 @@ public class QuickWriterIcash extends QuickWriter {
 			Intent failIntent = new Intent(context, ViewMain.class);
 			failIntent.putExtra("goto", 2);
 			PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, failIntent, 0);
-			notification.setLatestEventInfo(context, "네이버에 쓰기 실패", cause, pendingIntent);
+			notification.setLatestEventInfo(context, "icashhouse 사용내역 쓰기 실패", cause, pendingIntent);
 			NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 			nm.notify(ViewMain.NOTI_ID, notification);
 		}
@@ -123,19 +113,12 @@ public class QuickWriterIcash extends QuickWriter {
 		// 결과를 notify 한다.
 		if( isResultNoti ){
 			Context context = mWebView.getContext();
-	    	Notification notification = new Notification(R.drawable.icon, "네이버 가계부에 입력 완료", 0);
+	    	Notification notification = new Notification(R.drawable.icon, "icashhouse에 입력 완료", 0);
 	    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
 	    	Intent successIntent = new Intent();
 	    	PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, successIntent, 0);
-			String writeString = "";
-			for( String item : items ){
-				Log.v("beonit", "write item : " + item);
-				writeString = writeString + item + ";";
-			}
-			Log.v("beonit", "write item : " + writeString);
-			if( writeString.length() == 0 )
-				return;
-	    	notification.setLatestEventInfo(context, "기록 완료", writeString, pendingIntent);
+			Log.v("beonit", "write item : " + items.get(0) );
+	    	notification.setLatestEventInfo(context, "기록 완료", items.get(0), pendingIntent);
 			NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 	    	nm.notify(ViewMain.NOTI_ID, notification);
 		}

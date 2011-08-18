@@ -22,6 +22,7 @@ public class WebViewClientNaver extends WebViewClient {
 		this.passwd = passwd;
 	}
 	
+	@Override
 	public void onPageStarted(WebView view, String url, Bitmap favicon){
 		if( view.willNotDraw() && mProgressLoginDialog == null ){
 			try{

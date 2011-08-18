@@ -19,7 +19,6 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -115,7 +114,7 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
         	if( targetSite == TARGET_SITE.TARGET_NAVER )
         		wb.setWebViewClient( new WebViewClientNaver(prefs.getString("naverID", null), SimpleCrypto.decrypt("SECGAL", prefs.getString("naverPasswd", null) ) ));
         	else
-        		wb.setWebViewClient( new WebViewClientIcash() );
+        		wb.setWebViewClient( new WebViewClientIcash( prefs.getString("naverID", null), SimpleCrypto.decrypt("SECGAL", prefs.getString("naverPasswd", null) ) ));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;
