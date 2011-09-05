@@ -1,6 +1,7 @@
 package beonit.NaverMoneySync;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -32,7 +33,7 @@ public abstract class QuickWriter {
 	public static final int WRITE_FAIL_REGISTER = 7;
 	public static final int TIME_OUT = 8;
 
-	public boolean quickWrite(ArrayList<String> items) {
+	public boolean quickWrite(List<String> items2) {
 		Log.e("beonit", "this is interface method for override");
 		return false;
 	}
@@ -70,4 +71,5 @@ public abstract class QuickWriter {
 		}
 	}
 
+	
 }

@@ -7,25 +7,50 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
 public class SmsReceiver extends BroadcastReceiver {
 
+	
+	
+	
 	static final String SMS_RECV = "android.provider.Telephony.SMS_RECEIVED";
 	static final String NOTI_CLEAR = "beonit.NOTI_CLEAR";
 	
+	
+	
+	ICommunicator mICommunicator = null;
+	private ServiceConnection mConnection = new ServiceConnection() {
+	    // Called when the connection with the service is established
+	    public void onServiceConnected(ComponentName className, IBinder service) {
+	        // Following the example above for an AIDL interface,
+	        // this gets an instance of the IRemoteInterface, which we can use to call on the service
+	    	Log.e("beonit", "Service has unexpectedly connected");
+	    	mICommunicator = ICommunicator.Stub.asInterface(service);
+	    }
+
+	    // Called when the connection with the service disconnects unexpectedly
+	    public void onServiceDisconnected(ComponentName className) {
+	        Log.e("beonit", "Service has unexpectedly disconnected");
+	        mICommunicator = null;
+	    }
+	};
+	
 	@Override
 	public void onReceive(Context context, Intent intent) {
+		// send information to remote service
 		Log.w("beonit", "smsReceiver onReceive");
 		if (intent.getAction().equals(SMS_RECV)) {
 			// 정보 갖추기
@@ -48,6 +73,7 @@ public class SmsReceiver extends BroadcastReceiver {
 		    for(int i = 0; i < pdusObj.length; i++) {
 		        messages[i] = SmsMessage.createFromPdu((byte[])pdusObj[i]);
 		    }
+		    Log.i("beonit", "get message");
 		    
 		    if( messages.length < 0 ){
 		    	Log.v("beonit", "msg len : " + messages.length ); 
@@ -64,9 +90,11 @@ public class SmsReceiver extends BroadcastReceiver {
 		        Log.v("beonit", "msg : " + msg.getDisplayMessageBody());
 		        items.add( msg.getDisplayMessageBody().replace("\n", " ").replace("\r", " ") );
 		    }
+		    Log.i("beonit", "check item size");
 		    if( items.size() == 0 )
 		    	return;
 		    
+		    Log.i("beonit", "load failed message");
 		    // 이미 실패한 문자를 로드해서 한번의 통신에 한번에 쓴다.
 			SharedPreferences prefs = context.getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
 			String failsStr = prefs.getString("items", null);
@@ -75,6 +103,7 @@ public class SmsReceiver extends BroadcastReceiver {
 					items.add(fail);
 			}
 			
+			Log.i("beonit", "get id/passwd");
 			String id = prefs.getString("naverID", null);
 			String passwd = null;
 			try {
@@ -128,13 +157,28 @@ public class SmsReceiver extends BroadcastReceiver {
 				ed.commit();
 			}
 		    
-		    // 전송
-		    QuickWriterNaver writer = new QuickWriterNaver(id, passwd, context);
-			writer.setFailSave(true);
-			writer.setResultNoti(true);
-			Log.i("beonit", "ProgressThread " + items);
-		    ProgressThread progressThread = new ProgressThread(mHandler, writer, items);
-			progressThread.start();
+			Log.i("beonit", "startService");
+			Intent serviceIntent = new Intent(ICommunicator.class.getName());
+			context.startService(serviceIntent);
+			Log.i("beonit", "peekService");
+			IBinder bind = this.peekService(context, new Intent(serviceIntent));
+			if( bind == null )
+				Log.i("beonit", "bind null");
+			Log.i("beonit", "as interface");
+			mICommunicator = ICommunicator.Stub.asInterface(bind);
+			if( mICommunicator == null )
+				Log.i("beonit", "mICommunicator return null");
+			
+			try {
+				Log.i("beonit", "test start");
+				mICommunicator.test();
+				Log.i("beonit", "send to remote service");
+				mICommunicator.onRecvSMS(items, id, passwd);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+				return;
+			}
+			
 			return;
 		}
 	}
@@ -201,30 +245,5 @@ public class SmsReceiver extends BroadcastReceiver {
         return result;
     }
     
-    // send
-    private Handler mHandler = new SyncHandler(); 
-    public class SyncHandler extends Handler {
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case QuickWriterNaver.WRITE_READY:
-				break;
-			case QuickWriterNaver.WRITE_LOGIN_ATTEMPT:
-				break;
-			case QuickWriterNaver.WRITE_LOGIN_SUCCESS:
-				break;
-			case QuickWriterNaver.WRITE_WRITING:
-				break;
-			case QuickWriterNaver.WRITE_SUCCESS:
-				break;
-			case QuickWriterNaver.WRITE_LOGIN_FAIL:
-				break;
-			case QuickWriterNaver.WRITE_FAIL:
-				break;
-			case QuickWriterNaver.WRITE_FAIL_REGISTER:
-				break;
-			default:
-				break;
-			}
-		}
-	};
+    
 }
