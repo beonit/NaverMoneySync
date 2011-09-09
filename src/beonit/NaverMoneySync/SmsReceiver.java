@@ -135,6 +135,7 @@ public class SmsReceiver extends BroadcastReceiver {
 		nums.add("15881688");    // KB
 		nums.add("15889999");    // KB
 		nums.add("15882100");    // ³óÇù
+		nums.add("15881600");	 // ³óÇù2
 		nums.add("15776000");    // HYUNDAI
 		nums.add("15776200");    // HYUNDAI
 		nums.add("15778000");    // ½ÅÇÑ

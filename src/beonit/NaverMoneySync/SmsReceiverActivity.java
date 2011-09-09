@@ -1,7 +1,9 @@
 package beonit.NaverMoneySync;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -33,41 +35,60 @@ public class SmsReceiverActivity extends Activity {
 		Log.i("beonit", "ProgressThread" + items);
 	    ProgressThread progressThread = new ProgressThread(mHandler, writer, items);
 		progressThread.start();
+		DialogInterface.OnCancelListener listenerCancel = new DialogInterface.OnCancelListener (){
+			@Override
+			public void onCancel(DialogInterface dialog){
+				mProgressDialog.dismiss();
+				activity.finish();
+			}
+		};
+		mProgressDialog = ProgressDialog.show(this, "가계부 쓰기", "3G는 더 기다려 주세요\n창을 없애려면 뒤로가기 버튼\n취소해도 입력은 계속 진행됩니다.", false, true , listenerCancel);
+//		this.finish();
 	}
 	
 	// send
-    private Handler mHandler = new SyncHandler(); 
-    public class SyncHandler extends Handler {
+	Activity activity = this;
+	public ProgressDialog mProgressDialog;
+	private Handler mHandler = new SyncHandler(); 
+	public class SyncHandler extends Handler {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case QuickWriterNaver.WRITE_READY:
-				Log.i("beonit", "WRITE_READY");
+				mProgressDialog.setMessage("3G는 더 기다려 주세요\n접속 중...");
 				break;
 			case QuickWriterNaver.WRITE_LOGIN_ATTEMPT:
-				Log.i("beonit", "WRITE_LOGIN_ATTEMPT");
+				mProgressDialog.setMessage("3G는 더 기다려 주세요\n로그인 페이지 로드");
 				break;
 			case QuickWriterNaver.WRITE_LOGIN_SUCCESS:
-				Log.i("beonit", "WRITE_LOGIN_SUCCESS");
+				mProgressDialog.setMessage("3G는 더 기다려 주세요\n입력 페이지 로드");
 				break;
 			case QuickWriterNaver.WRITE_WRITING:
-				Log.i("beonit", "WRITE_WRITING");
+				mProgressDialog.setMessage("3G는 더 기다려 주세요\n가계부 내용 입력 ");
 				break;
 			case QuickWriterNaver.WRITE_SUCCESS:
-				Log.i("beonit", "WRITE_SUCCESS");
+				mProgressDialog.dismiss(); // ProgressDialog 종료
+				activity.finish();
 				break;
 			case QuickWriterNaver.WRITE_LOGIN_FAIL:
-				Log.i("beonit", "WRITE_LOGIN_FAIL");
+				mProgressDialog.dismiss(); // ProgressDialog 종료
+				activity.finish();
 				break;
 			case QuickWriterNaver.WRITE_FAIL:
-				Log.i("beonit", "WRITE_FAIL");
+				mProgressDialog.dismiss(); // ProgressDialog 종료
+				activity.finish();
 				break;
 			case QuickWriterNaver.WRITE_FAIL_REGISTER:
-				Log.i("beonit", "WRITE_FAIL_REGISTER");
+				mProgressDialog.dismiss(); // ProgressDialog 종료
+				activity.finish();
+				break;
+			case QuickWriterNaver.TIME_OUT:
+				mProgressDialog.dismiss(); // ProgressDialog 종료
+				activity.finish();
 				break;
 			default:
 				break;
 			}
 		}
-    }
+	};
     
 }
