@@ -1,7 +1,5 @@
 package beonit.NaverMoneySync;
 
-import java.util.ArrayList;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -18,7 +16,8 @@ public class QuickWriterNaver extends QuickWriter {
 		mWebView.setWebViewClient(new NaverViewClient());
 	}
 	
-	public boolean quickWrite(ArrayList<String> items){
+	@Override
+	public boolean quickWrite(String itemsStr){
 		super.quickWrite(items, "https://nid.naver.com/nidlogin.login?svctype=262144&url=http://beta.moneybook.naver.com/m/write.nhn?method=quick");
         mWebView.addJavascriptInterface(new JSInterfaceNaver(), "HTMLOUT");
         return true;
@@ -45,14 +44,8 @@ public class QuickWriterNaver extends QuickWriter {
     			writeState = WRITE_LOGIN_SUCCESS;
     		}
     		else if( url.equals("http://beta.moneybook.naver.com/m/write.nhn?method=quick") ){
-    			String writeString = "";
-    			for( String item : items ){
-    				writeString = writeString + item + ";";
-    			}
-    			if( writeString.length() == 0 )
-    				return;
     			view.loadUrl("javascript:window.HTMLOUT.showHTML(items.value)");
-    			view.loadUrl("javascript:items.value='"+ writeString +"'");
+    			view.loadUrl("javascript:items.value='"+ items +"'");
     			view.loadUrl("javascript:window.HTMLOUT.showHTML(items.value)");
 	    		view.loadUrl("javascript:writeForm.submit()");
 	    		writeState = WRITE_WRITING;
@@ -122,15 +115,7 @@ public class QuickWriterNaver extends QuickWriter {
 	    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
 	    	Intent successIntent = new Intent();
 	    	PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, successIntent, 0);
-			String writeString = "";
-			for( String item : items ){
-				Log.v("beonit", "write item : " + item);
-				writeString = writeString + item + ";";
-			}
-			Log.v("beonit", "write item : " + writeString);
-			if( writeString.length() == 0 )
-				return;
-	    	notification.setLatestEventInfo(context, "기록 완료", writeString, pendingIntent);
+	    	notification.setLatestEventInfo(context, "기록 완료", items, pendingIntent);
 			NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 	    	nm.notify(ViewMain.NOTI_ID, notification);
 		}

@@ -1,6 +1,5 @@
 package beonit.NaverMoneySync;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.app.AlertDialog;
@@ -9,16 +8,20 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
+import android.os.RemoteException;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -187,10 +190,7 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 			alert.show();
 			return;
     	}
-    	ArrayList<String> items = new ArrayList<String>();
-    	for( String item : failStrs.split(";") )
-    		items.add(item);
-    	if( doSubmit(items, true) ){
+    	if( doSubmit(failStrs, true) ){
     		Editor ed = prefs.edit();
         	ed.putString("items", "");
         	ed.commit();
@@ -216,6 +216,7 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
     ProgressThread progressThread;
     public ProgressDialog mProgressDialog;
 	TabActivity activity = this;
+    
 	
     public boolean onSubmitRecord(View view){
     	// 내용 빈칸 확인
@@ -238,18 +239,19 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 		// 날짜 v 사용내역 v 카드 or 현금 v 금액 (v=공백)
 		String contents = editText.getText().toString();
 		contents.replace(" ", "");
-		ArrayList<String> items = new ArrayList<String>();
-		items.add( new String( new StringBuilder().append(mMonth+1).append("/")
-								.append(mDay).append(" ")
-								.append(contents).append("  ")
-								.append("현금 ")
-								.append(editMoney.getText()).append("원")
-								) );
-		return doSubmit(items, false);
+		StringBuilder items = new StringBuilder();
+		items.append(mMonth+1).append("/")
+							.append(mDay).append(" ")
+							.append(contents).append("  ")
+							.append("현금 ")
+							.append(editMoney.getText())
+							.append("원")
+							.append(";");
+		return doSubmit(items.toString(), false);
     }
     
-    public boolean doSubmit(ArrayList<String> items, boolean failSave ){
-    	
+
+    public boolean doSubmit(String items, boolean failSave ){
 		String id, passwd;
     	// 네이버 계정 설정
     	SharedPreferences prefs = getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);

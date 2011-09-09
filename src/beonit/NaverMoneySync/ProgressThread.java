@@ -1,15 +1,13 @@
 package beonit.NaverMoneySync;
 
-import java.util.List;
-
 import android.os.Handler;
 import android.util.Log;
 
 public class ProgressThread extends Thread {
 	Handler mHandler;
 	QuickWriter writer;
-	List<String> items;
-    ProgressThread(Handler h, QuickWriter writer, List<String> items) {
+	String items;
+    ProgressThread(Handler h, QuickWriter writer, String items) {
     	this.writer = writer;
     	this.items = items;
         mHandler = h;

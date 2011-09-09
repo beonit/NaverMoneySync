@@ -1,13 +1,8 @@
 package beonit.NaverMoneySync;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Service;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
@@ -15,40 +10,16 @@ import android.os.Message;
 import android.os.RemoteException;
 import android.util.Log;
 
-public class Communicator extends Service {
+public class ServiceCommunicate extends Service {
+
 	private Context context = this;
 	ProgressThread progressThread;
-
 	
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		Log.e("beonit", "Service on create");
 	}
-	
-//	public void writeReq() {
-//		SharedPreferences prefs = context.getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
-//		String id = prefs.getString("naverID", null);
-//		String passwd = null;
-//		try {
-//			passwd = SimpleCrypto.decrypt("SECGAL", prefs.getString("naverPasswd", null));
-//		} catch (Exception e) {
-//			Log.e("beonit", "simple crypto decrypt fail");
-//			e.printStackTrace();
-//		}
-//		String failsStrs = prefs.getString("items", null);
-//		ArrayList<String> items = new ArrayList<String>();
-//    	for( String item : failsStrs.split(";") )
-//    		items.add(item);
-//		// Àü¼Û
-//		Log.i("beonit", "recv to remote service");
-//		QuickWriterNaver writer = new QuickWriterNaver(id, passwd, context);
-//		writer.setFailSave(true);
-//		writer.setResultNoti(true);
-//		Log.i("beonit", "ProgressThread" + items);
-//		progressThread = new ProgressThread(mHandler, writer, items);
-//		progressThread.start();
-//	}
 	
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -62,6 +33,7 @@ public class Communicator extends Service {
 		@Override
 		public void onRecvSMS()
 				throws RemoteException {
+			Log.i("beonit", "onRecvSMS");
 			SharedPreferences prefs = context.getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
 			String items = prefs.getString("items", "");
 			String id = prefs.getString("naverID", null);
@@ -86,9 +58,8 @@ public class Communicator extends Service {
 		public void test() throws RemoteException {
 			Log.i("beonit", "test service");
 		}
-		
 	};
-
+	
 	// send
     private Handler mHandler = new SyncHandler(); 
     public class SyncHandler extends Handler {
@@ -122,5 +93,5 @@ public class Communicator extends Service {
 				break;
 			}
 		}
-	};
+    }
 }

@@ -12,15 +12,20 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 public class QuickWriterIcash extends QuickWriter {
+	
+	ArrayList<String> itemArray = new ArrayList<String>();
+	
 	public QuickWriterIcash(String id, String passwd, Context context){
 		super(id, passwd, context);
 		mWebView.setWebViewClient(new ICashViewClient());
 	}
 	
-	public boolean quickWrite(ArrayList<String> items){
-		super.quickWrite(items, "http://m.icashhouse.co.kr");
+	public boolean quickWrite(String itemsStr){
+		super.quickWrite(itemsStr, "http://m.icashhouse.co.kr");
 		mWebView.addJavascriptInterface(new JSInterfaceICash(), "HTMLOUT");
 		mWebView.setWillNotDraw(true);
+		for( String item : itemsStr.split(";") )
+			itemArray.add( item );
         return true;
 	}
 	
@@ -48,7 +53,7 @@ public class QuickWriterIcash extends QuickWriter {
     			switch(writeState){
     			case WRITE_LOGIN_SUCCESS:
         			view.loadUrl("javascript:date_r_.value=" + "2011-08-18" );
-        			view.loadUrl("javascript:item.value=" + items.get(0) );
+        			view.loadUrl("javascript:item.value=" + itemArray.get(0) );
         			view.loadUrl("javascript:money.value=" + 100 );
         			view.loadUrl("javascript:insert.submit( check_insert('', document.getElementsByName('insert')[0] ) )");
         			writeState = WRITE_WRITING;
@@ -117,8 +122,8 @@ public class QuickWriterIcash extends QuickWriter {
 	    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
 	    	Intent successIntent = new Intent();
 	    	PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, successIntent, 0);
-			Log.v("beonit", "write item : " + items.get(0) );
-	    	notification.setLatestEventInfo(context, "기록 완료", items.get(0), pendingIntent);
+			Log.v("beonit", "write item : " + itemArray.get(0) );
+	    	notification.setLatestEventInfo(context, "기록 완료", itemArray.get(0), pendingIntent);
 			NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 	    	nm.notify(ViewMain.NOTI_ID, notification);
 		}

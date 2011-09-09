@@ -1,8 +1,5 @@
 package beonit.NaverMoneySync;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -19,7 +16,7 @@ public abstract class QuickWriter {
 	
 	protected String id;
 	protected String passwd;
-	protected ArrayList<String> items;
+	protected String items;
 	protected WebView mWebView;
 	protected int writeState = WRITE_READY;
 	
@@ -33,12 +30,12 @@ public abstract class QuickWriter {
 	public static final int WRITE_FAIL_REGISTER = 7;
 	public static final int TIME_OUT = 8;
 
-	public boolean quickWrite(List<String> items2) {
+	public boolean quickWrite(String items) {
 		Log.e("beonit", "this is interface method for override");
 		return false;
 	}
 	
-	protected void quickWrite(ArrayList<String> items, String url) {
+	protected void quickWrite(String items, String url) {
 		this.items = items;
 		mWebView.setWillNotDraw(true);
 		mWebView.loadUrl(url);
@@ -58,15 +55,8 @@ public abstract class QuickWriter {
 		if( isFailSave ){
 			Context context = mWebView.getContext();
 			SharedPreferences prefs = context.getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
-			String writeString = "";
-			for( String item : items ){
-				writeString = writeString + item + ";";
-			}
-			if( writeString.length() == 0 )
-				return;
-	        String newItems = writeString + prefs.getString("items", ""); 
 	        SharedPreferences.Editor editor = prefs.edit();
-	        editor.putString("items", newItems);
+	        editor.putString("items", items + prefs.getString("items", "") );
 			editor.commit();
 		}
 	}
