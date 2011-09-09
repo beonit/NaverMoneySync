@@ -18,6 +18,7 @@ public class QuickWriterNaver extends QuickWriter {
 	
 	@Override
 	public boolean quickWrite(String itemsStr){
+		items = itemsStr;
 		super.quickWrite(items, "https://nid.naver.com/nidlogin.login?svctype=262144&url=http://beta.moneybook.naver.com/m/write.nhn?method=quick");
         mWebView.addJavascriptInterface(new JSInterfaceNaver(), "HTMLOUT");
         return true;

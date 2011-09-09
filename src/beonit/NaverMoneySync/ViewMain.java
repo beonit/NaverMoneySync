@@ -8,20 +8,16 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
-import android.os.RemoteException;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -247,9 +243,9 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 							.append(editMoney.getText())
 							.append("¿ø")
 							.append(";");
+		Log.i("beonit", "write : " + items.toString());
 		return doSubmit(items.toString(), false);
     }
-    
 
     public boolean doSubmit(String items, boolean failSave ){
 		String id, passwd;
@@ -307,6 +303,7 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
     		naverWriter.setResultNoti(false);
     		writer = naverWriter;
     	}
+    	Log.i("beonit", "progress thread : " + items);
 		progressThread = new ProgressThread(mHandler, writer, items);
 		progressThread.start();
 		return true;

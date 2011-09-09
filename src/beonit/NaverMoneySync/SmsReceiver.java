@@ -22,8 +22,6 @@ public class SmsReceiver extends BroadcastReceiver {
 	static final String SMS_RECV = "android.provider.Telephony.SMS_RECEIVED";
 	static final String NOTI_CLEAR = "beonit.NOTI_CLEAR";
 	
-	ICommunicator mICommunicator = null;
-	
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		// send information to remote service
@@ -56,14 +54,14 @@ public class SmsReceiver extends BroadcastReceiver {
 		    
 		    // 기존 SMS 를 부른다.
 			SharedPreferences prefs = context.getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
-			StringBuilder item = new StringBuilder(prefs.getString("items", ""));
+			StringBuilder item = new StringBuilder(prefs.getString("items", "")).append("; ");
 			// 여러개의 sms가 동시에 올 경우를 생각한다.
 		    for( SmsMessage msg : messages ) {
 		        if( !isCardSender( msg.getOriginatingAddress() ) )
 		        	continue;
 		        Log.v("beonit", "sender : " + msg.getOriginatingAddress());
 		        Log.v("beonit", "msg : " + msg.getDisplayMessageBody());
-		        item.append( msg.getDisplayMessageBody().replace("\n", " ").replace("\r", " ") );
+		        item.append( msg.getDisplayMessageBody().replace("\n", " ").replace("\r", " ") + "; " );
 		    }
 		    
 		    // save sms items
@@ -108,7 +106,7 @@ public class SmsReceiver extends BroadcastReceiver {
 			}
 			
 			Log.i("beonit", "start activity call");
-			Intent launcherIntent = new Intent( context, ServiceLauncher.class );
+			Intent launcherIntent = new Intent( context, SmsReceiverActivity.class );
 			launcherIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			context.startActivity(launcherIntent);
 

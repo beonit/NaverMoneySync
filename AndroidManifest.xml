@@ -30,12 +30,7 @@
 			</intent-filter>
 		</receiver>
 		
-		<service android:name=".ServiceCommunicate" android:process=":remote">
-			<intent-filter>
-				<action android:name="beonit.NaverMoneySync.ICommunicator"/>			
-			</intent-filter>
-		</service>
-		<activity android:name="ServiceLauncher" android:theme="@android:style/Theme.Translucent"></activity>
+		<activity android:name="SmsReceiverActivity" android:theme="@android:style/Theme.Translucent"></activity>
 		
 </application>
 </manifest> 

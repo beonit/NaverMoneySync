@@ -31,6 +31,7 @@ public abstract class QuickWriter {
 	public static final int TIME_OUT = 8;
 
 	public boolean quickWrite(String items) {
+		this.items = items;
 		Log.e("beonit", "this is interface method for override");
 		return false;
 	}
