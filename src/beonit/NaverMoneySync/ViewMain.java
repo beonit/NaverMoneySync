@@ -19,6 +19,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,6 +45,10 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        
+        // test start
+        
+        // test finish
         
         mTabHost = getTabHost();
         
@@ -244,6 +249,7 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
     }
     
     public boolean doSubmit(ArrayList<String> items, boolean failSave ){
+    	
 		String id, passwd;
     	// 네이버 계정 설정
     	SharedPreferences prefs = getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);

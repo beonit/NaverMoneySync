@@ -3,6 +3,7 @@ package beonit.NaverMoneySync;
 import java.util.List;
 
 import android.os.Handler;
+import android.util.Log;
 
 public class ProgressThread extends Thread {
 	Handler mHandler;
@@ -15,6 +16,7 @@ public class ProgressThread extends Thread {
     }
     
     public void run() {
+    	Log.i("beonit", "run start");
     	writer.quickWrite(items);
     	int state = QuickWriterNaver.WRITE_READY;
     	int newState = QuickWriterNaver.WRITE_READY;
