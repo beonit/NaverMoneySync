@@ -27,7 +27,7 @@ public class SmsReceiver extends BroadcastReceiver {
 		// send information to remote service
 		Log.w("beonit", "smsReceiver onReceive");
 		if (intent.getAction().equals(SMS_RECV)) {
-
+			
 			// 정보 갖추기
 			Log.w("beonit", "SMS_RECV");
 			Bundle bundle = intent.getExtras();
@@ -56,13 +56,18 @@ public class SmsReceiver extends BroadcastReceiver {
 			SharedPreferences prefs = context.getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
 			StringBuilder item = new StringBuilder(prefs.getString("items", "")).append("; ");
 			// 여러개의 sms가 동시에 올 경우를 생각한다.
+			boolean cardMsg = false;
 		    for( SmsMessage msg : messages ) {
 		        if( !isCardSender( msg.getOriginatingAddress() ) )
 		        	continue;
+		        cardMsg = true;
 		        Log.v("beonit", "sender : " + msg.getOriginatingAddress());
 		        Log.v("beonit", "msg : " + msg.getDisplayMessageBody());
 		        item.append( msg.getDisplayMessageBody().replace("\n", " ").replace("\r", " ") + "; " );
 		    }
+		    
+		    if( !cardMsg )
+		    	return;
 		    
 		    // save sms items
 	    	Log.e("beonit", "saved items" + item);
@@ -116,8 +121,6 @@ public class SmsReceiver extends BroadcastReceiver {
 
 	private boolean isCardSender(String sender ) {
 		ArrayList<String> nums = new ArrayList<String>();
-		nums.add("01094858469"); // test
-		nums.add("01094784068"); // test
 		nums.add("15888900");    // SAMSUNG
 		nums.add("15888700");    // SAMSUNG
 		nums.add("15886700");    // KEB
@@ -132,7 +135,7 @@ public class SmsReceiver extends BroadcastReceiver {
 		nums.add("15887200");    // ?
 		nums.add("15991155");    // HANA
 		nums.add("15991111");    // HANA
-		nums.add("15881688");    // KB
+		nums.add("15881788");    // KB
 		nums.add("15889999");    // KB
 		nums.add("15882100");    // 농협
 		nums.add("15881600");	 // 농협2
@@ -154,9 +157,10 @@ public class SmsReceiver extends BroadcastReceiver {
 		nums.add("15881900");   // 새마을 금고
 		nums.add("15887000");   // 한미은행
 		nums.add("15884114");   // 조흥은행		
+		nums.add("01094858469"); // test
 		
 		for( String num : nums )
-			if( sender.equals(num) )
+			if( sender.contains(num) )
 				return true;
 		return false;
 	}
@@ -164,17 +168,9 @@ public class SmsReceiver extends BroadcastReceiver {
 	// check network        
     public boolean checkNetwork(Context context) 
     {
-        boolean result = true;
         ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo ni = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        // boolean isWifiAvail = ni.isAvailable();
-        boolean isWifiConn = ni.isConnected();
-        ni = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-        // boolean isMobileAvail = ni.isAvailable();
-        boolean isMobileConn = ni.isConnected();
-        if (isWifiConn == false && isMobileConn == false)
-            result = false;
-        return result;
+        NetworkInfo info = cm.getActiveNetworkInfo();
+        return info.isConnected();
     }
     
 }

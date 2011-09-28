@@ -18,7 +18,7 @@ public class ProgressThread extends Thread {
     	writer.quickWrite(items);
     	int state = QuickWriterNaver.WRITE_READY;
     	int newState = QuickWriterNaver.WRITE_READY;
-    	for( int i=0; i<100; i++ ){
+    	for( int i=0; i<300; i++ ){
     		try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {

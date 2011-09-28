@@ -473,7 +473,7 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 		}
 		WebView wb = (WebView)findViewById(R.id.naverView);
 		if( targetSite == TARGET_SITE.TARGET_NAVER )
-			wb.loadUrl("https://nid.naver.com/nidlogin.login?svctype=262144&url=http://beta.moneybook.naver.com/m/view.nhn?method=monthly");
+			wb.loadUrl("https://nid.naver.com/nidlogin.login?svctype=262144&url=http://moneybook.naver.com/m/view.nhn?method=monthly");
 		else
 			wb.loadUrl("http://m.icashhouse.co.kr/");
 	}

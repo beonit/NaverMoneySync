@@ -46,7 +46,7 @@ public class WebViewClientNaver extends WebViewClient {
 		}
 		if( id == null || passwd == null || id.length() == 0 || passwd.length() == 0 )
 			return;
-		if( url.equals("https://nid.naver.com/nidlogin.login?svctype=262144&url=http://beta.moneybook.naver.com/m/view.nhn?method=monthly")){
+		if( url.equals("https://nid.naver.com/nidlogin.login?svctype=262144&url=http://moneybook.naver.com/m/view.nhn?method=monthly")){
 			view.loadUrl("javascript:id.value='"+ id +"'");
 			view.loadUrl("javascript:pw.value='"+ passwd +"'");
 			view.loadUrl("javascript:loginform.submit()");
@@ -63,10 +63,10 @@ public class WebViewClientNaver extends WebViewClient {
 		}else if( url.contains("http://static.nid.naver.com/login/sso/finalize.nhn") ){
 			if( mProgressLoginDialog != null )
 				mProgressLoginDialog.setMessage("3G는 더 기다려 주세요\n가계부 로딩 중");
-		}else if( url.equals("http://beta.moneybook.naver.com/m/view.nhn?method=monthly") ){
+		}else if( url.equals("http://moneybook.naver.com/m/view.nhn?method=monthly") ){
 			// 정상 로딩 완료
 			closeDialog();
-		}else if( url.equals("http://beta.moneybook.naver.com/m/mbookUser.nhn")){
+		}else if( url.equals("http://moneybook.naver.com/m/mbookUser.nhn")){
 			closeDialog();
     		errorNotify(view, "가계부 가입 안됨", "현재 앱을 닫고 모바일 웹/PC 로 먼저 약관동의를 처리하고 접속해 주세요." );
 		}else{

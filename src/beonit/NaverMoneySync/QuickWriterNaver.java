@@ -18,10 +18,14 @@ public class QuickWriterNaver extends QuickWriter {
 		mWebView.setWebViewClient(new NaverViewClient());
 	}
 	
+	public void stop(){
+		mWebView.stopLoading();
+	}
+	
 	@Override
 	public boolean quickWrite(String itemsStr){
 		items = itemsStr;
-		super.quickWrite(items, "https://nid.naver.com/nidlogin.login?svctype=262144&url=http://beta.moneybook.naver.com/m/write.nhn?method=quick");
+		super.quickWrite(items, "https://nid.naver.com/nidlogin.login?svctype=262144&url=http://moneybook.naver.com/m/write.nhn?method=quick");
         mWebView.addJavascriptInterface(new JSInterfaceNaver(), "HTMLOUT");
         sendProgressNotify("로그인 준비");
         return true;
@@ -31,7 +35,7 @@ public class QuickWriterNaver extends QuickWriter {
     	@Override
     	public void onPageFinished(WebView view, String url){
     		Log.i("beonit", url);
-    		if( url.equals("https://nid.naver.com/nidlogin.login?svctype=262144&url=http://beta.moneybook.naver.com/m/write.nhn?method=quick")){
+    		if( url.equals("https://nid.naver.com/nidlogin.login?svctype=262144&url=http://moneybook.naver.com/m/write.nhn?method=quick")){
     			Log.v("beonit", "page load, login attempt");
     			writeState = WRITE_READY;
     			Log.v("beonit", "login... attempt with id/passwd");
@@ -50,7 +54,7 @@ public class QuickWriterNaver extends QuickWriter {
     			writeState = WRITE_LOGIN_SUCCESS;
     			sendProgressNotify("로그인 로그인 완료");
     		}
-    		else if( url.equals("http://beta.moneybook.naver.com/m/write.nhn?method=quick") ){
+    		else if( url.equals("http://moneybook.naver.com/m/write.nhn?method=quick") ){
     			view.loadUrl("javascript:window.HTMLOUT.showHTML(items.value)");
     			view.loadUrl("javascript:items.value='"+ items +"'");
     			view.loadUrl("javascript:window.HTMLOUT.showHTML(items.value)");
@@ -58,14 +62,14 @@ public class QuickWriterNaver extends QuickWriter {
 	    		writeState = WRITE_WRITING;
 	    		sendProgressNotify("가계부에 쓰기");
     		}
-    		else if( url.equals("http://beta.moneybook.naver.com/m/smry.nhn")){
+    		else if( url.equals("http://moneybook.naver.com/m/smry.nhn")){
     			Log.v("beonit", "write finish");
     			sendSuccess();
     			view.destroy();
     			writeState = WRITE_SUCCESS;
     			sendProgressNotify("쓰기 완료");
     		}
-    		else if( url.equals("http://beta.moneybook.naver.com/m/mbookUser.nhn")){
+    		else if( url.equals("http://moneybook.naver.com/m/mbookUser.nhn")){
     			view.destroy();
     			sendFail("가계부 약관동의 안됨");
     			writeState = WRITE_FAIL_REGISTER;
@@ -144,7 +148,7 @@ public class QuickWriterNaver extends QuickWriter {
 	    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
 	    	Intent successIntent = new Intent();
 	    	PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, successIntent, 0);
-	    	notification.setLatestEventInfo(context, "네이버 가계부에 기록 중", items, pendingIntent);
+	    	notification.setLatestEventInfo(context, progressString, items, pendingIntent);
 			NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 	    	nm.notify(ViewMain.NOTI_ID, notification);
 		}
