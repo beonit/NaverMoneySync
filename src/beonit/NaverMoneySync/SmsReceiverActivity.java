@@ -13,7 +13,7 @@ import android.view.Window;
 
 public class SmsReceiverActivity extends Activity {
 
-	QuickWriterNaver writer = null;
+	QuickWriter writer = null;
 	ProgressThread progressThread = null;
 	
 	@Override

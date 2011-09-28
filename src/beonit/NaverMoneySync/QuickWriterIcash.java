@@ -1,90 +1,58 @@
 package beonit.NaverMoneySync;
 
-import java.util.ArrayList;
+import java.io.InputStream;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
-public class QuickWriterIcash extends QuickWriter {
-	
-	ArrayList<String> itemArray = new ArrayList<String>();
+public class QuickWriterIcash extends QuickWriter implements IQuickWriter {
 	
 	public QuickWriterIcash(String id, String passwd, Context context){
-		super(id, passwd, context);
-		mWebView.setWebViewClient(new ICashViewClient());
+		super(id, passwd);
 	}
 	
 	public boolean quickWrite(String itemsStr){
-		super.quickWrite(itemsStr, "http://m.icashhouse.co.kr");
-		mWebView.addJavascriptInterface(new JSInterfaceICash(), "HTMLOUT");
-		mWebView.setWillNotDraw(true);
-		for( String item : itemsStr.split(";") )
-			itemArray.add( item );
+		// https://www.icashhouse.co.kr:50103/api_android/insert.php
+		// GET or POST
+		// mb_id : 사용자 아이디
+		// mb_password : 사용자 비밀번호
+		// date : 날짜. ex) 2011-12-01
+		// item : 품목 혹은 거래처. ex) 김밥(배고파서먹음)
+		// money : 금액. ex) 21000
+		// l_acc_type : 차변의 계정. ex) e
+		// l_acc_id : 차변의 항목 고유번호. ex) 917773
+		// r_acc_type : 대변의 계정. ex) a
+		// r_acc_id : 대변의 항목 고유번호. ex) 827711
+		StringBuilder uri = new StringBuilder();
+		uri = uri.append("?mb_id=beonit").append("&mb_password=akdma59")
+					.append("&date=2011-12-01").append("&item=").append("itemsStr")
+					.append("&money=1000").append("&l_acc_type=")
+					.append("&l_acc_id=").append("&r_acc_type=")
+					.append("&r_acc_id=");
+		try {
+			executeHttpGet(uri.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+			writeState = WRITE_FAIL;
+			return false;
+		}
         return true;
 	}
 	
-	class ICashViewClient extends WebViewClient{
-    	@Override
-    	public void onPageFinished(WebView view, String url){
-    		Log.i("beonit", "onPageFinished : " + url);
-    		if( url.equals("http://m.icashhouse.co.kr/")){
-    			switch( writeState ){
-    			case WRITE_READY:
-        			Log.v("beonit", "onPageFinished, WRITE_READY");
-    				view.loadUrl("javascript:Username.value='" + id + "'");
-    				view.loadUrl("javascript:Password.value='" + passwd + "'");
-    				view.loadUrl("javascript:login.submit( check_login( document.getElementById('frm_login') ) )");
-    				writeState = QuickWriter.WRITE_LOGIN_ATTEMPT;
-    				view.reload();
-    				break;
-    			case WRITE_LOGIN_ATTEMPT:
-    				Log.v("beonit", "onPageFinished, WRITE_LOGIN_ATTEMPT");
-    				view.loadUrl("javascript:window.HTMLOUT.checkLoginResult( document.getElementById('others').innerHTML );");
-    				break;
-    			}
-    		}
-    		else if( url.equals("http://m.icashhouse.co.kr/tra_insert.php") ){
-    			switch(writeState){
-    			case WRITE_LOGIN_SUCCESS:
-        			view.loadUrl("javascript:date_r_.value=" + "2011-08-18" );
-        			view.loadUrl("javascript:item.value=" + itemArray.get(0) );
-        			view.loadUrl("javascript:money.value=" + 100 );
-        			view.loadUrl("javascript:insert.submit( check_insert('', document.getElementsByName('insert')[0] ) )");
-        			writeState = WRITE_WRITING;
-        			break;
-    			case WRITE_WRITING:
-    				writeState = WRITE_SUCCESS;
-    			}
-    			sendSuccess();
-    		}
-    		else{
-    			Log.e("boenit", "fail : " + url);
-    			view.destroy();
-    			sendFail("원인을 모름");
-    			writeState = WRITE_FAIL;
-    		}
-    	}
-    }
-	
-	final class JSInterfaceICash {
-		
-		public void checkLoginResult(final String html){
-			Log.i("beonit", "checkLogin : " + html);
-			if( html.contains("기타설정") ){
-				writeState = WRITE_LOGIN_SUCCESS;
-				mWebView.loadUrl("http://m.icashhouse.co.kr/tra_insert.php");
-			}
-			else{
-				writeState = WRITE_LOGIN_FAIL;
-			}
-			return;
+	public InputStream executeHttpGet(String url) throws Exception {
+		InputStream content = null;
+		try {
+			// TODO. encode uri
+			HttpClient httpclient = new DefaultHttpClient();
+			HttpResponse response = httpclient.execute(new HttpGet(url));
+			content = response.getEntity().getContent();
+		} catch (Exception e) {
 		}
+		return content;
+		
 	}
 	
 	///////////////////////////////////////////////////////////////////////////////////
@@ -92,40 +60,8 @@ public class QuickWriterIcash extends QuickWriter {
 	// notify 의 경우 각 가계부 사이트마다 실패 사유가 다양할 수 있기 때문에 각 사이트 특성을 파생시킨 클래스에서 해 주어야 한다.
     ///////////////////////////////////////////////////////////////////////////////////
 	
-	private boolean isResultNoti = true;
-	public void setResultNoti( boolean noti ){
-		this.isResultNoti = noti;
-	}
-
-	public void sendFail(String cause) {
-		super.sendFail(); 
-		// 결과를 notify 한다.
-		if( isResultNoti ){
-			// result notify  
-			Context context = mWebView.getContext();
-			Notification notification = new Notification(R.drawable.icon, "가계부 입력 실패", 0);
-			notification.flags |= Notification.FLAG_AUTO_CANCEL;
-			Intent failIntent = new Intent(context, ViewMain.class);
-			failIntent.putExtra("goto", 2);
-			PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, failIntent, 0);
-			notification.setLatestEventInfo(context, "icashhouse 사용내역 쓰기 실패", cause, pendingIntent);
-			NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-			nm.notify(ViewMain.NOTI_ID, notification);
-		}
-	}
-
-	private void sendSuccess() {
-		// 결과를 notify 한다.
-		if( isResultNoti ){
-			Context context = mWebView.getContext();
-	    	Notification notification = new Notification(R.drawable.icon, "icashhouse에 입력 완료", 0);
-	    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
-	    	Intent successIntent = new Intent();
-	    	PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, successIntent, 0);
-			Log.v("beonit", "write item : " + itemArray.get(0) );
-	    	notification.setLatestEventInfo(context, "기록 완료", itemArray.get(0), pendingIntent);
-			NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-	    	nm.notify(ViewMain.NOTI_ID, notification);
-		}
+	@Override
+	public void stop() {
+		
 	}
 }
