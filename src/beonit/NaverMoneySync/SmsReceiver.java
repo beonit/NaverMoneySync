@@ -28,7 +28,7 @@ public class SmsReceiver extends BroadcastReceiver {
 		Log.w("beonit", "smsReceiver onReceive");
 		if (intent.getAction().equals(SMS_RECV)) {
 			
-			// Á¤º¸ °®Ãß±â
+			// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ß±ï¿½
 			Log.w("beonit", "SMS_RECV");
 			Bundle bundle = intent.getExtras();
 			if (bundle == null) {
@@ -52,10 +52,10 @@ public class SmsReceiver extends BroadcastReceiver {
 		    	return;
 		    }
 		    
-		    // ±âÁ¸ SMS ¸¦ ºÎ¸¥´Ù.
+		    // ï¿½ï¿½ï¿½ï¿½ SMS ï¿½ï¿½ ï¿½Î¸ï¿½ï¿½ï¿½.
 			SharedPreferences prefs = context.getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
 			StringBuilder item = new StringBuilder(prefs.getString("items", "")).append("; ");
-			// ¿©·¯°³ÀÇ sms°¡ µ¿½Ã¿¡ ¿Ã °æ¿ì¸¦ »ý°¢ÇÑ´Ù.
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ smsï¿½ï¿½ ï¿½ï¿½ï¿½Ã¿ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ì¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 			boolean cardMsg = false;
 		    for( SmsMessage msg : messages ) {
 		        if( !isCardSender( msg.getOriginatingAddress() ) )
@@ -85,26 +85,26 @@ public class SmsReceiver extends BroadcastReceiver {
 				e.printStackTrace();
 			}
 
-			// °èÁ¤ Á¤º¸°¡ ¾øÀ¸¸é ³¡.
+			// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½.
 			if( id == null || passwd == null || id.length() == 0 || passwd.length() == 0 ){
-				Log.i("beonit", "id/pw Á¤º¸ ¾øÀ½");
-		    	Notification notification = new Notification(R.drawable.icon, "°èÁ¤ Á¤º¸°¡ ¾ø½À´Ï´Ù.", 0);
+				Log.i("beonit", "id/pw ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½");
+		    	Notification notification = new Notification(R.drawable.icon, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.", 0);
 		    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
 		    	Intent failIntent = new Intent(context, ViewMain.class);
 		    	failIntent.putExtra("goto", 1);
 		    	PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, failIntent, 0);
-		    	notification.setLatestEventInfo(context, "°¡°èºÎ ¾²±â ½ÇÆÐ", "°èÁ¤ Á¤º¸°¡ ¾ø½À´Ï´Ù.", pendingIntent);
+		    	notification.setLatestEventInfo(context, "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.", pendingIntent);
 				NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 		    	nm.notify(ViewMain.NOTI_ID, notification);
 		    	return;
 			}else if(!checkNetwork(context)){
-				Log.i("beonit", "³×Æ®¿öÅ© ¾ÈµÊ");
-		    	Notification notification = new Notification(R.drawable.icon, "ÀÎÅÍ³Ý »ç¿ë ºÒ°¡", 0);
+				Log.i("beonit", "ï¿½ï¿½Æ®ï¿½ï¿½Å© ï¿½Èµï¿½");
+		    	Notification notification = new Notification(R.drawable.icon, "ï¿½ï¿½ï¿½Í³ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ò°ï¿½", 0);
 		    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
 		    	Intent failIntent = new Intent(context, ViewMain.class);
 		    	failIntent.putExtra("goto", 1);
 		    	PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, failIntent, 0);
-		    	notification.setLatestEventInfo(context, "°¡°èºÎ ¾²±â ½ÇÆÐ", "ÀÎÅÍ³Ý »ç¿ë ºÒ°¡ »óÅÂ", pendingIntent);
+		    	notification.setLatestEventInfo(context, "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", "ï¿½ï¿½ï¿½Í³ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ò°ï¿½ ï¿½ï¿½ï¿½ï¿½", pendingIntent);
 				NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 		    	nm.notify(ViewMain.NOTI_ID, notification);
 			    return;
@@ -127,7 +127,7 @@ public class SmsReceiver extends BroadcastReceiver {
 		nums.add("15883000");    // KEB    
 		nums.add("15884000");    // WOORI
 		nums.add("15885000");    // WOORI
-		nums.add("0220085000");  // WOORI - ¿Ü±¹
+		nums.add("0220085000");  // WOORI - ï¿½Ü±ï¿½
 		nums.add("15884000");    // BC
 		nums.add("15888100");    // LOTTE
 		nums.add("15887000");    // CITY
@@ -137,26 +137,27 @@ public class SmsReceiver extends BroadcastReceiver {
 		nums.add("15991111");    // HANA
 		nums.add("15881788");    // KB
 		nums.add("15889999");    // KB
-		nums.add("15882100");    // ³óÇù
-		nums.add("15881600");	 // ³óÇù2
+		nums.add("16449999");    // KB
+		nums.add("15882100");    // ï¿½ï¿½ï¿½ï¿½
+		nums.add("15881600");	 // ï¿½ï¿½ï¿½ï¿½2
 		nums.add("15776000");    // HYUNDAI
 		nums.add("15776200");    // HYUNDAI
-		nums.add("15778000");    // ½ÅÇÑ
-		nums.add("15884560");    // Çö´ë ¹éÈ­Á¡ Ä«µå
-		nums.add("15880056");    // µ¿¾çÁ¾±Ý
-		nums.add("15773997");    // µ¿¾çÁ¾±Ý W Á¦ÈÞÄ«µå
-		nums.add("15881155");    // ÇÏ³ª sk
-		nums.add("15881599");    // Á¦ÀÏÀºÇà
-		// µ¿¾ç »ï¼º
-		nums.add("15881515");    // ±â¾÷ÀºÇà
-		// Á¦ÁÖÀºÇà
-		// ±¤ÁÖÀºÇà
-		nums.add("15881515");   // ¼öÇù
-		// ÃàÇù
-		nums.add("15888801");   // »õ¸¶À» ±Ý°í
-		nums.add("15881900");   // »õ¸¶À» ±Ý°í
-		nums.add("15887000");   // ÇÑ¹ÌÀºÇà
-		nums.add("15884114");   // Á¶ÈïÀºÇà		
+		nums.add("15778000");    // ï¿½ï¿½ï¿½ï¿½
+		nums.add("15884560");    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È­ï¿½ï¿½ Ä«ï¿½ï¿½
+		nums.add("15880056");    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		nums.add("15773997");    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ W ï¿½ï¿½ï¿½ï¿½Ä«ï¿½ï¿½
+		nums.add("15881155");    // ï¿½Ï³ï¿½ sk
+		nums.add("15881599");    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¼º
+		nums.add("15881515");    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		nums.add("15881515");   // ï¿½ï¿½ï¿½ï¿½
+		// ï¿½ï¿½ï¿½ï¿½
+		nums.add("15888801");   // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ý°ï¿½
+		nums.add("15881900");   // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ý°ï¿½
+		nums.add("15887000");   // ï¿½Ñ¹ï¿½ï¿½ï¿½ï¿½ï¿½
+		nums.add("15884114");   // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½		
 		nums.add("01094858469"); // test
 		
 		for( String num : nums )
