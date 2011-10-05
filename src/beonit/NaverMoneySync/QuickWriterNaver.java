@@ -16,7 +16,8 @@ public class QuickWriterNaver extends QuickWriter implements IQuickWriter {
 	
 	@Override
 	public void stop(){
-		mWebView.stopLoading();
+		if( mWebView != null )
+			mWebView.destroy();
 	}
 	
 	@Override
@@ -65,17 +66,20 @@ public class QuickWriterNaver extends QuickWriter implements IQuickWriter {
     			Log.v("beonit", "write finish");
     			sendSuccess();
     			view.destroy();
+    			view = null;
     			writeState = WRITE_SUCCESS;
     			sendProgressNotify("쓰기 완료");
     		}
     		else if( url.equals("http://moneybook.naver.com/m/mbookUser.nhn")){
     			view.destroy();
+    			view = null;
     			sendFail("가계부 약관동의 안됨");
     			writeState = WRITE_FAIL_REGISTER;
     		}
     		else{
     			Log.e("boenit", "fail : " + url);
     			view.destroy();
+    			view = null;
     			sendFail("원인을 모름");
     			writeState = WRITE_FAIL;
     		}

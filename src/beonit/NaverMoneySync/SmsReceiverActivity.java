@@ -46,12 +46,13 @@ public class SmsReceiverActivity extends Activity {
 			}
 		};
 		mProgressDialog = ProgressDialog.show(this, "가계부 쓰기", "3G는 더 기다려 주세요\n창을 없애려면 뒤로가기 버튼\n취소해도 입력은 계속 진행됩니다.", false, true , listenerCancel);
-//		this.finish();
 	}
 	
 	@Override
 	protected void onDestroy (){
-		writer.stop();
+		super.onDestroy();
+		if( writer != null )
+			writer.stop();
 	}
 	
 	// send

@@ -58,7 +58,7 @@ public class SmsReceiver extends BroadcastReceiver {
 			// 여러개의 sms가 동시에 올 경우를 생각한다.
 			boolean cardMsg = false;
 		    for( SmsMessage msg : messages ) {
-		        if( !isCardSender( msg.getOriginatingAddress() ) )
+		        if( !isCardSender( msg.getOriginatingAddress().replace("\n", "").replace("-", "").replace(" ", ""), context ) )
 		        	continue;
 		        cardMsg = true;
 		        Log.v("beonit", "sender : " + msg.getOriginatingAddress());
@@ -114,12 +114,11 @@ public class SmsReceiver extends BroadcastReceiver {
 			Intent launcherIntent = new Intent( context, SmsReceiverActivity.class );
 			launcherIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			context.startActivity(launcherIntent);
-
 			return;
 		}
 	}
 
-	private boolean isCardSender(String sender ) {
+	private boolean isCardSender(String sender, Context context ) {
 		ArrayList<String> nums = new ArrayList<String>();
 		nums.add("15888900");    // SAMSUNG
 		nums.add("15888700");    // SAMSUNG
@@ -159,9 +158,27 @@ public class SmsReceiver extends BroadcastReceiver {
 		nums.add("15884114");   // 조흥은행		
 		nums.add("01094858469"); // test
 		
-		for( String num : nums )
-			if( sender.contains(num) )
+		for( String num : nums ){
+			if( sender.contains(num) ){
+				Log.i("beonit", "cell phone num matched");
+		    	Notification notification = new Notification(R.drawable.icon, "카드 문자 수신", 0);
+		    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
+		    	Intent successIntent = new Intent();
+		    	PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, successIntent, 0);
+		    	notification.setLatestEventInfo(context, "전화번호", num, pendingIntent);
+				NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+		    	nm.notify(ViewMain.NOTI_ID, notification);
 				return true;
+			}
+		}
+		Log.i("beonit", "cell phone num not matched");
+    	Notification notification = new Notification(R.drawable.icon, "그냥 문자 수신", 0);
+    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
+    	Intent successIntent = new Intent();
+    	PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, successIntent, 0);
+    	notification.setLatestEventInfo(context, "카드사 전화번호 아님", "누르시면 사라집니다.", pendingIntent);
+		NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+    	nm.notify(ViewMain.NOTI_ID, notification);
 		return false;
 	}
 	

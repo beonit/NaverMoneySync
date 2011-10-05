@@ -1,12 +1,19 @@
 package beonit.NaverMoneySync;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.content.Context;
+import android.util.Log;
 
 public class QuickWriterIcash extends QuickWriter implements IQuickWriter {
 	
@@ -27,29 +34,57 @@ public class QuickWriterIcash extends QuickWriter implements IQuickWriter {
 		// r_acc_type : 대변의 계정. ex) a
 		// r_acc_id : 대변의 항목 고유번호. ex) 827711
 		StringBuilder uri = new StringBuilder();
-		uri = uri.append("?mb_id=beonit").append("&mb_password=akdma59")
-					.append("&date=2011-12-01").append("&item=").append("itemsStr")
-					.append("&money=1000").append("&l_acc_type=")
-					.append("&l_acc_id=").append("&r_acc_type=")
-					.append("&r_acc_id=");
+    	String itemStr = null;
 		try {
-			executeHttpGet(uri.toString());
-		} catch (Exception e) {
+			itemStr = URLEncoder.encode("한글이 잘 써지나요?" , "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			Log.e("beonit", "item str encode fail");
 			e.printStackTrace();
-			writeState = WRITE_FAIL;
 			return false;
 		}
+		uri = uri.append("https://www.icashhouse.co.kr:50103/api_android/insert.php").append("?mb_id=beonit").append("&mb_password=akdma59")
+					.append("&date=2011-9-30").append("&item=").append( itemStr )
+					.append("&money=1,000")
+					.append("&l_acc_type=e").append("&l_acc_id=917773")
+					.append("&r_acc_type=e").append("&r_acc_id=827711");
+		InputStream in = null;
+		try {
+			in = executeHttpGet( uri.toString() );
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.e("beonit", "executeHttpGet fail");
+			return false;
+		}
+		if( in == null ){
+			Log.e("beonit", "input stream is null");
+			return false;
+		}
+		InputStreamReader isr = new InputStreamReader(in);
+	    BufferedReader br = new BufferedReader(isr);
+	    String s;
+	    try {
+			while ((s = br.readLine()) != null) {
+				Log.i("beonit", "result : " + s);
+			}
+			isr.close();
+		} catch (IOException e) {
+			Log.e("beonit", "input stream is null");
+			e.printStackTrace();
+		}
+
         return true;
 	}
 	
 	public InputStream executeHttpGet(String url) throws Exception {
+		Log.i("beonit", "request url : " + url );
 		InputStream content = null;
 		try {
-			// TODO. encode uri
 			HttpClient httpclient = new DefaultHttpClient();
 			HttpResponse response = httpclient.execute(new HttpGet(url));
 			content = response.getEntity().getContent();
 		} catch (Exception e) {
+			Log.i("beonit", "http request fail");
+			e.printStackTrace();
 		}
 		return content;
 		
