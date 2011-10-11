@@ -1,9 +1,13 @@
 package beonit.NaverMoneySync;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,6 +19,8 @@ public class SmsReceiverActivity extends Activity {
 
 	QuickWriter writer = null;
 	ProgressThread progressThread = null;
+	
+	private Context getContext(){ return this; }
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -41,6 +47,17 @@ public class SmsReceiverActivity extends Activity {
 		DialogInterface.OnCancelListener listenerCancel = new DialogInterface.OnCancelListener (){
 			@Override
 			public void onCancel(DialogInterface dialog){
+				// notify
+				Log.i("beonit", "user cancel writing to naver");
+		    	Notification notification = new Notification(R.drawable.icon, "사용자 입력 취소", 0);
+		    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
+		    	Intent cancelIntent = new Intent();
+		    	PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, cancelIntent, 0);
+		    	notification.setLatestEventInfo(getContext(), "사용자 입력 취소", "당신이 네이버 입력을 취소했습니다", pendingIntent);
+				NotificationManager nm = (NotificationManager)getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+		    	nm.notify(ViewMain.NOTI_ID, notification);
+				
+				// close dialog
 				mProgressDialog.dismiss();
 				activity.finish();
 			}

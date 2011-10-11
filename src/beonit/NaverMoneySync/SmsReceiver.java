@@ -57,8 +57,15 @@ public class SmsReceiver extends BroadcastReceiver {
 			StringBuilder item = new StringBuilder(prefs.getString("items", "")).append("; ");
 			// 여러개의 sms가 동시에 올 경우를 생각한다.
 			boolean cardMsg = false;
+			StringBuffer numStr;
 		    for( SmsMessage msg : messages ) {
-		        if( !isCardSender( msg.getOriginatingAddress().replace("\n", "").replace("-", "").replace(" ", ""), context ) )
+		    	// 전화번호에서 숫자만 뽑아온다.
+		    	numStr = new StringBuffer();
+				for( char c : msg.getOriginatingAddress().toCharArray() )
+					if( Character.isDigit(c) )
+						numStr.append(c);
+				// 카드문자인지 확인
+		        if( !isCardSender( numStr.toString(), context ) )
 		        	continue;
 		        cardMsg = true;
 		        Log.v("beonit", "sender : " + msg.getOriginatingAddress());
@@ -136,6 +143,7 @@ public class SmsReceiver extends BroadcastReceiver {
 		nums.add("15991111");    // HANA
 		nums.add("15881788");    // KB
 		nums.add("15889999");    // KB
+		nums.add("16449999");    // KB
 		nums.add("15882100");    // 농협
 		nums.add("15881600");	 // 농협2
 		nums.add("15776000");    // HYUNDAI
