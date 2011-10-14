@@ -24,19 +24,19 @@ public class QuickWriterIcash extends QuickWriter implements IQuickWriter {
 	public boolean quickWrite(String itemsStr){
 		// https://www.icashhouse.co.kr:50103/api_android/insert.php
 		// GET or POST
-		// mb_id : »ç¿ëÀÚ ¾ÆÀÌµğ
-		// mb_password : »ç¿ëÀÚ ºñ¹Ğ¹øÈ£
-		// date : ³¯Â¥. ex) 2011-12-01
-		// item : Ç°¸ñ È¤Àº °Å·¡Ã³. ex) ±è¹ä(¹è°íÆÄ¼­¸ÔÀ½)
-		// money : ±İ¾×. ex) 21000
-		// l_acc_type : Â÷º¯ÀÇ °èÁ¤. ex) e
-		// l_acc_id : Â÷º¯ÀÇ Ç×¸ñ °íÀ¯¹øÈ£. ex) 917773
-		// r_acc_type : ´ëº¯ÀÇ °èÁ¤. ex) a
-		// r_acc_id : ´ëº¯ÀÇ Ç×¸ñ °íÀ¯¹øÈ£. ex) 827711
+		// mb_id : ì‚¬ìš©ì ì•„ì´ë””
+		// mb_password : ì‚¬ìš©ì ë¹„ë°€ë²ˆí˜¸
+		// date : ë‚ ì§œ. ex) 2011-12-01
+		// item : í’ˆëª© í˜¹ì€ ê±°ë˜ì²˜. ex) ê¹€ë°¥(ë°°ê³ íŒŒì„œë¨¹ìŒ)
+		// money : ê¸ˆì•¡. ex) 21000
+		// l_acc_type : ì°¨ë³€ì˜ ê³„ì •. ex) e
+		// l_acc_id : ì°¨ë³€ì˜ í•­ëª© ê³ ìœ ë²ˆí˜¸. ex) 917773
+		// r_acc_type : ëŒ€ë³€ì˜ ê³„ì •. ex) a
+		// r_acc_id : ëŒ€ë³€ì˜ í•­ëª© ê³ ìœ ë²ˆí˜¸. ex) 827711
 		StringBuilder uri = new StringBuilder();
     	String itemStr = null;
 		try {
-			itemStr = URLEncoder.encode("ÇÑ±ÛÀÌ Àß ½áÁö³ª¿ä?" , "UTF-8");
+			itemStr = URLEncoder.encode("í•œê¸€ì´ ì˜ ì¨ì§€ë‚˜ìš”?" , "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			Log.e("beonit", "item str encode fail");
 			e.printStackTrace();
@@ -91,8 +91,8 @@ public class QuickWriterIcash extends QuickWriter implements IQuickWriter {
 	}
 	
 	///////////////////////////////////////////////////////////////////////////////////
-	// ÀÌ°÷¿¡¼­ ¼º°í ½ÇÆĞ¿¡ °üÇÑ notify, ÀúÀå°ü¸®¸¦ ÇÑ´Ù.
-	// notify ÀÇ °æ¿ì °¢ °¡°èºÎ »çÀÌÆ®¸¶´Ù ½ÇÆĞ »çÀ¯°¡ ´Ù¾çÇÒ ¼ö ÀÖ±â ¶§¹®¿¡ °¢ »çÀÌÆ® Æ¯¼ºÀ» ÆÄ»ı½ÃÅ² Å¬·¡½º¿¡¼­ ÇØ ÁÖ¾î¾ß ÇÑ´Ù.
+	// ì´ê³³ì—ì„œ ì„±ê³  ì‹¤íŒ¨ì— ê´€í•œ notify, ì €ì¥ê´€ë¦¬ë¥¼ í•œë‹¤.
+	// notify ì˜ ê²½ìš° ê° ê°€ê³„ë¶€ ì‚¬ì´íŠ¸ë§ˆë‹¤ ì‹¤íŒ¨ ì‚¬ìœ ê°€ ë‹¤ì–‘í•  ìˆ˜ ìˆê¸° ë•Œë¬¸ì— ê° ì‚¬ì´íŠ¸ íŠ¹ì„±ì„ íŒŒìƒì‹œí‚¨ í´ë˜ìŠ¤ì—ì„œ í•´ ì£¼ì–´ì•¼ í•œë‹¤.
     ///////////////////////////////////////////////////////////////////////////////////
 	
 	@Override

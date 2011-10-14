@@ -5,14 +5,14 @@ import java.util.StringTokenizer;
 public class Parser {
 	public static String Parse(String sms) throws Exception{
 		/*
-		 * [KBÄ«µå] ÀÌ½ÂÇÑ´Ô 8*9*Ä«µå 03¿ù06ÀÏ01:01 3000¿ø ÈÑ¸®¹Ì¸®¸¶Æ® ¸ÅÅº »ç¿ë
-		 * »ï¼ºÄ«µå 03/06 14:26 11¹ø°¡ 39,320¿ø ÀÏ½ÃºÒ»ç¿ë °¨»çÇÕ´Ï´Ù
+		 * [KBì¹´ë“œ] ì´ìŠ¹í•œë‹˜ 8*9*ì¹´ë“œ 03ì›”06ì¼01:01 3000ì› í›¼ë¦¬ë¯¸ë¦¬ë§ˆíŠ¸ ë§¤íƒ„ ì‚¬ìš©
+		 * ì‚¼ì„±ì¹´ë“œ 03/06 14:26 11ë²ˆê°€ 39,320ì› ì¼ì‹œë¶ˆì‚¬ìš© ê°ì‚¬í•©ë‹ˆë‹¤
     	 * http://moneybook.naver.com/m/write.nhn?method=quick
-    	 * ¾Æ·¡ Çü½ÄÀ¸·Î ÀÚÀ¯·Ó°Ô ¿©·¯°ÇÀ» µî·ÏÇÏ¼¼¿ä.
-    	 * ³¯Â¥ v »ç¿ë³»¿ª v Ä«µå or Çö±İ v ±İ¾× (v=°ø¹é)
-    	 * ¿©·¯°Ç ÀÔ·Â ½Ã ; ¼¼¹ÌÄİ·ĞÀ¸·Î ±¸ºĞ ÇÕ´Ï´Ù.
-    	 * Ä«µå ½ÂÀÎ SMS¸¦ º¹»çÇÏ¿© ºÙ¿© ÀÔ·Â ÇÒ ¼ö ÀÖ¾î¿ä.
-    	 * ¿¹) 06/05 »ç°ú 1,500¿ø; °è¶õ 2,800¿ø
+    	 * ì•„ë˜ í˜•ì‹ìœ¼ë¡œ ììœ ë¡­ê²Œ ì—¬ëŸ¬ê±´ì„ ë“±ë¡í•˜ì„¸ìš”.
+    	 * ë‚ ì§œ v ì‚¬ìš©ë‚´ì—­ v ì¹´ë“œ or í˜„ê¸ˆ v ê¸ˆì•¡ (v=ê³µë°±)
+    	 * ì—¬ëŸ¬ê±´ ì…ë ¥ ì‹œ ; ì„¸ë¯¸ì½œë¡ ìœ¼ë¡œ êµ¬ë¶„ í•©ë‹ˆë‹¤.
+    	 * ì¹´ë“œ ìŠ¹ì¸ SMSë¥¼ ë³µì‚¬í•˜ì—¬ ë¶™ì—¬ ì…ë ¥ í•  ìˆ˜ ìˆì–´ìš”.
+    	 * ì˜ˆ) 06/05 ì‚¬ê³¼ 1,500ì›; ê³„ë€ 2,800ì›
     	 */
 		return new Parser(sms).toString();
 	}
@@ -23,7 +23,7 @@ public class Parser {
 	public String money;
 	
 	public String toString(){
-		// ³¯Â¥ v »ç¿ë³»¿ª v Ä«µå or Çö±İ v ±İ¾× (v=°ø¹é)
+		// ë‚ ì§œ v ì‚¬ìš©ë‚´ì—­ v ì¹´ë“œ or í˜„ê¸ˆ v ê¸ˆì•¡ (v=ê³µë°±)
 		return date + " " + store + " " + cardCompany + " " + money;
 	}
 	
@@ -33,11 +33,11 @@ public class Parser {
 		StringTokenizer tokens = new StringTokenizer(sms);
 		if( !tokens.hasMoreTokens() )
 			throw new Exception("sms content parse fail");
-		cardCompany = tokens.nextToken();	// [KBÄ«µå], »ï¼ºÄ«µå
-		if( cardCompany.equals("»ï¼ºÄ«µå"))
+		cardCompany = tokens.nextToken();	// [KBì¹´ë“œ], ì‚¼ì„±ì¹´ë“œ
+		if( cardCompany.equals("ì‚¼ì„±ì¹´ë“œ"))
 			parseSamsung(tokens);
-		else if( cardCompany.equals("[KBÄ«µå]") ){
-			cardCompany = "KBÄ«µå";
+		else if( cardCompany.equals("[KBì¹´ë“œ]") ){
+			cardCompany = "KBì¹´ë“œ";
 			parseKB(tokens);
 		}
 		else{
@@ -46,7 +46,7 @@ public class Parser {
 	}
 
 	private void parseSamsung(StringTokenizer tokens) throws Exception {
-//		 »ï¼ºÄ«µå 03/06 14:26 11¹ø°¡ 39,320¿ø ÀÏ½ÃºÒ»ç¿ë °¨»çÇÕ´Ï´Ù
+//		 ì‚¼ì„±ì¹´ë“œ 03/06 14:26 11ë²ˆê°€ 39,320ì› ì¼ì‹œë¶ˆì‚¬ìš© ê°ì‚¬í•©ë‹ˆë‹¤
 		if( !tokens.hasMoreTokens() )
 			throw new Exception("sms content parse fail");
 		date = tokens.nextToken();
@@ -62,7 +62,7 @@ public class Parser {
 	}
 
 	private void parseKB(StringTokenizer tokens) throws Exception {
-//		[KBÄ«µå] ÀÌ½ÂÇÑ´Ô 8*9*Ä«µå 08¿ù06ÀÏ01:01 3000¿ø ÈÑ¸®¹Ì¸®¸¶Æ® ¸ÅÅº »ç¿ë
+//		[KBì¹´ë“œ] ì´ìŠ¹í•œë‹˜ 8*9*ì¹´ë“œ 08ì›”06ì¼01:01 3000ì› í›¼ë¦¬ë¯¸ë¦¬ë§ˆíŠ¸ ë§¤íƒ„ ì‚¬ìš©
 		if( !tokens.hasMoreTokens() )
 			throw new Exception("sms content parse fail");
 		tokens.nextToken();
@@ -71,7 +71,7 @@ public class Parser {
 		tokens.nextToken();
 		if( !tokens.hasMoreTokens() )
 			throw new Exception("sms content parse fail");
-		date = tokens.nextToken();  //03¿ù06ÀÏ01:01
+		date = tokens.nextToken();  //03ì›”06ì¼01:01
 		date = date.substring(0, 6);
 		if( !tokens.hasMoreTokens() )
 			throw new Exception("sms content parse fail");

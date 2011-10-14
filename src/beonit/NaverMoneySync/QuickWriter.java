@@ -52,12 +52,12 @@ public abstract class QuickWriter implements IQuickWriter {
 		if( isResultNoti ){
 			// result notify  
 			Context context = mWebView.getContext();
-			Notification notification = new Notification(R.drawable.icon, "∞°∞Ë∫Œ ¿‘∑¬ Ω«∆–", 0);
+			Notification notification = new Notification(R.drawable.icon, "Í∞ÄÍ≥ÑÎ∂Ä ÏûÖÎ†• Ïã§Ìå®", 0);
 			notification.flags |= Notification.FLAG_AUTO_CANCEL;
 			Intent failIntent = new Intent(context, ViewMain.class);
 			failIntent.putExtra("goto", 2);
 			PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, failIntent, 0);
-			notification.setLatestEventInfo(context, "æ≤±‚ Ω«∆–", cause, pendingIntent);
+			notification.setLatestEventInfo(context, "Ïì∞Í∏∞ Ïã§Ìå®", cause, pendingIntent);
 			NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 			nm.notify(ViewMain.NOTI_ID, notification);
 		}
@@ -73,21 +73,21 @@ public abstract class QuickWriter implements IQuickWriter {
 		Editor ed = prefs.edit();
     	ed.putString("items", "");
     	ed.commit();
-		// ∞·∞˙∏¶ notify «—¥Ÿ.
+		// Í≤∞Í≥ºÎ•º notify ÌïúÎã§.
 		if( isResultNoti ){
 			Context context = mWebView.getContext();
-	    	Notification notification = new Notification(R.drawable.icon, "±‚∑œ øœ∑·", 0);
+	    	Notification notification = new Notification(R.drawable.icon, "Í∏∞Î°ù ÏôÑÎ£å", 0);
 	    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
 	    	Intent successIntent = new Intent();
 	    	PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, successIntent, 0);
-	    	notification.setLatestEventInfo(context, "±‚∑œ øœ∑·", items, pendingIntent);
+	    	notification.setLatestEventInfo(context, "Í∏∞Î°ù ÏôÑÎ£å", items, pendingIntent);
 			NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 	    	nm.notify(ViewMain.NOTI_ID, notification);
 		}
 	}
 
 	protected void sendProgressNotify( String progressString ){
-		// ∞·∞˙∏¶ notify «—¥Ÿ.
+		// Í≤∞Í≥ºÎ•º notify ÌïúÎã§.
 		if( isResultNoti ){
 			Context context = mWebView.getContext();
 	    	Notification notification = new Notification(R.drawable.icon, progressString, 0);

@@ -26,14 +26,14 @@ public class WebViewClientNaver extends WebViewClient {
 	public void onPageStarted(WebView view, String url, Bitmap favicon){
 		if( view.willNotDraw() && mProgressLoginDialog == null ){
 			try{
-				mProgressLoginDialog = ProgressDialog.show(view.getContext(), "°¡°èºÎ ·Îµù", "3G´Â ´õ ±â´Ù·Á ÁÖ¼¼¿ä\n·Î±×ÀÎ ÆäÀÌÁö ·Îµù", false);
+				mProgressLoginDialog = ProgressDialog.show(view.getContext(), "ê°€ê³„ë¶€ ë¡œë”©", "3GëŠ” ë” ê¸°ë‹¤ë ¤ ì£¼ì„¸ìš”\në¡œê·¸ì¸ í˜ì´ì§€ ë¡œë”©", false);
 				mProgressLoginDialog.setCancelable(true);
 			}catch(Exception e){
 				Log.e("beonit", "dialog error");
 				e.printStackTrace();
 			}
 		}else if( !view.willNotDraw() && mProgressLoadingDialog == null && mProgressLoginDialog == null ){
-			mProgressLoadingDialog = ProgressDialog.show(view.getContext(), "°¡°èºÎ À¥ÆäÀÌÁö ·Îµù", " 3G´Â ´õ ±â´Ù·Á ÁÖ¼¼¿ä\nµÚ·Î°¡±â ¹öÆ°À» ´©¸£¸é »ç¶óÁı´Ï´Ù.", false);
+			mProgressLoadingDialog = ProgressDialog.show(view.getContext(), "ê°€ê³„ë¶€ ì›¹í˜ì´ì§€ ë¡œë”©", " 3GëŠ” ë” ê¸°ë‹¤ë ¤ ì£¼ì„¸ìš”\në’¤ë¡œê°€ê¸° ë²„íŠ¼ì„ ëˆ„ë¥´ë©´ ì‚¬ë¼ì§‘ë‹ˆë‹¤.", false);
 			mProgressLoadingDialog.setCancelable(true);
 		}
 	}
@@ -53,22 +53,22 @@ public class WebViewClientNaver extends WebViewClient {
 			MyJavaScriptInterface iJS = new MyJavaScriptInterface();
 			view.addJavascriptInterface(iJS, "HTMLOUT");
 			if( mProgressLoginDialog != null )
-				mProgressLoginDialog.setMessage("3G´Â ´õ ±â´Ù·Á ÁÖ¼¼¿ä\n·Î±×ÀÎ ½Ãµµ");
+				mProgressLoginDialog.setMessage("3GëŠ” ë” ê¸°ë‹¤ë ¤ ì£¼ì„¸ìš”\në¡œê·¸ì¸ ì‹œë„");
 		}
 		else if( url.equals("https://nid.naver.com/nidlogin.login?svctype=262144") ){
 			view.loadUrl("javascript:window.HTMLOUT.showHTML('' + document.body.getElementsByTagName('span')[3].innerHTML);");
 			if( mProgressLoginDialog != null )
-				mProgressLoginDialog.setMessage("3G´Â ´õ ±â´Ù·Á ÁÖ¼¼¿ä\n·Î±×ÀÎ Ã³¸®");
+				mProgressLoginDialog.setMessage("3GëŠ” ë” ê¸°ë‹¤ë ¤ ì£¼ì„¸ìš”\në¡œê·¸ì¸ ì²˜ë¦¬");
 			view.setWillNotDraw(false);
 		}else if( url.contains("http://static.nid.naver.com/login/sso/finalize.nhn") ){
 			if( mProgressLoginDialog != null )
-				mProgressLoginDialog.setMessage("3G´Â ´õ ±â´Ù·Á ÁÖ¼¼¿ä\n°¡°èºÎ ·Îµù Áß");
+				mProgressLoginDialog.setMessage("3GëŠ” ë” ê¸°ë‹¤ë ¤ ì£¼ì„¸ìš”\nê°€ê³„ë¶€ ë¡œë”© ì¤‘");
 		}else if( url.equals("http://moneybook.naver.com/m/view.nhn?method=monthly") ){
-			// Á¤»ó ·Îµù ¿Ï·á
+			// ì •ìƒ ë¡œë”© ì™„ë£Œ
 			closeDialog();
 		}else if( url.equals("http://moneybook.naver.com/m/mbookUser.nhn")){
 			closeDialog();
-    		errorNotify(view, "°¡°èºÎ °¡ÀÔ ¾ÈµÊ", "ÇöÀç ¾ÛÀ» ´İ°í ¸ğ¹ÙÀÏ À¥/PC ·Î ¸ÕÀú ¾à°üµ¿ÀÇ¸¦ Ã³¸®ÇÏ°í Á¢¼ÓÇØ ÁÖ¼¼¿ä." );
+    		errorNotify(view, "ê°€ê³„ë¶€ ê°€ì… ì•ˆë¨", "í˜„ì¬ ì•±ì„ ë‹«ê³  ëª¨ë°”ì¼ ì›¹/PC ë¡œ ë¨¼ì € ì•½ê´€ë™ì˜ë¥¼ ì²˜ë¦¬í•˜ê³  ì ‘ì†í•´ ì£¼ì„¸ìš”." );
 		}else{
 			closeDialog();
 		}
@@ -79,9 +79,9 @@ public class WebViewClientNaver extends WebViewClient {
 		alert.setTitle( title );
 		alert.setMessage( message );
 		alert.setPositiveButton(
-				 "´İ±â", new DialogInterface.OnClickListener() {
+				 "ë‹«ê¸°", new DialogInterface.OnClickListener() {
 				    public void onClick( DialogInterface dialog, int which) {
-				        dialog.dismiss();   //´İ±â
+				        dialog.dismiss();   //ë‹«ê¸°
 				    }
 				});
 		alert.show();
@@ -96,7 +96,7 @@ public class WebViewClientNaver extends WebViewClient {
 	
 	final class MyJavaScriptInterface {
 	    public void showHTML(String html) {
-	        if( html.contains("¿À·ù") ){
+	        if( html.contains("ì˜¤ë¥˜") ){
 	        	mProgressLoginDialog.dismiss();
 	        	mProgressLoginDialog = null;
 	        }
@@ -105,6 +105,6 @@ public class WebViewClientNaver extends WebViewClient {
 
 	public void onReceivedError(WebView view, int errorCode, String description, String failingUrl){
 		closeDialog();
-		errorNotify(view, "·Îµù ¿¡·¯", "³×ÀÌ¹ö ·Îµù¿¡ ½ÇÆĞÇß½À´Ï´Ù" );
+		errorNotify(view, "ë¡œë”© ì—ëŸ¬", "ë„¤ì´ë²„ ë¡œë”©ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤" );
 	}
 }

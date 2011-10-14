@@ -52,15 +52,15 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
         mTabHost = getTabHost();
         
         mTabHost.addTab(mTabHost.newTabSpec("tabWrite")
-        		.setIndicator("Çö±İ »ç¿ë")
+        		.setIndicator("í˜„ê¸ˆ ì‚¬ìš©")
         		.setContent(R.id.viewRecord)
         		);
         mTabHost.addTab(mTabHost.newTabSpec("tabNaverView")
-        		.setIndicator("°¡°èºÎ Á¶È¸")
+        		.setIndicator("ê°€ê³„ë¶€ ì¡°íšŒ")
         		.setContent(R.id.viewNaver)
         		);
         mTabHost.addTab(mTabHost.newTabSpec("tabRewrite")
-        		.setIndicator("ÀçÀü¼Û")
+        		.setIndicator("ì¬ì „ì†¡")
         		.setContent(R.id.viewRewrite)
         		);
         mTabHost.setOnTabChangedListener(this);
@@ -86,12 +86,12 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
     	recordDate.setText(
             new StringBuilder()
                     // Month is 0 based so add 1
-            		.append(mYear).append("³â ")
-                    .append(mMonth + 1).append("¿ù ")
-                    .append(mDay).append("ÀÏ")
+            		.append(mYear).append("ë…„ ")
+                    .append(mMonth + 1).append("ì›” ")
+                    .append(mDay).append("ì¼")
                     );
 
-    	// °èÁ¤ Á¤º¸°¡ ¾øÀ¸¸é °èÁ¤ Á¤º¸ ¾×Æ¼ºñÆ¼ ½ÇÇà
+    	// ê³„ì • ì •ë³´ê°€ ì—†ìœ¼ë©´ ê³„ì • ì •ë³´ ì•¡í‹°ë¹„í‹° ì‹¤í–‰
 		String id = prefs.getString("naverID", null);
 		String passwd = prefs.getString("naverPasswd", null);
 		if( id == null || passwd == null || id.length() == 0 || passwd.length() == 0 ){
@@ -129,8 +129,8 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 	public static final int MENU_ACCOUNT_SETTING = 1;
 	public static final int MENU_ABOUT = 2;
 	public boolean onCreateOptionsMenu (Menu menu){
-		menu.add(0, MENU_ACCOUNT_SETTING, 1, "naver °èÁ¤ ¼³Á¤");
-		menu.add(0, MENU_ABOUT, 1, "ÇÁ·Î±×·¥¿¡ ´ëÇÏ¿©");
+		menu.add(0, MENU_ACCOUNT_SETTING, 1, "naver ê³„ì • ì„¤ì •");
+		menu.add(0, MENU_ABOUT, 1, "í”„ë¡œê·¸ë¨ì— ëŒ€í•˜ì—¬");
 		return true;
 	}
 	
@@ -160,7 +160,7 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
     	Button buttonDismiss = (Button)findViewById(R.id.ButtonDismiss);
     	String items = prefs.getString("items", "");
     	if( items.length() == 0 ){
-        	TextViewRewriteItmes.setText("½ÇÆĞÇÑ ¹®ÀÚ ¾øÀ½");
+        	TextViewRewriteItmes.setText("ì‹¤íŒ¨í•œ ë¬¸ì ì—†ìŒ");
         	buttonRewrite.setEnabled(false);
         	buttonDismiss.setEnabled(false);
         }else{
@@ -175,12 +175,12 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
     	String failStrs = prefs.getString("items", null);
     	if( failStrs == null ){
     		AlertDialog.Builder alert = new AlertDialog.Builder(this);
-			alert.setTitle( "³»¿ë ¾øÀ½" );
-			alert.setMessage( "ÀçÀü¼ÛÇÒ ³»¿ëÀÌ ¾ø½À´Ï´Ù" );
+			alert.setTitle( "ë‚´ìš© ì—†ìŒ" );
+			alert.setMessage( "ì¬ì „ì†¡í•  ë‚´ìš©ì´ ì—†ìŠµë‹ˆë‹¤" );
 			alert.setPositiveButton(
-					 "´İ±â", new DialogInterface.OnClickListener() {
+					 "ë‹«ê¸°", new DialogInterface.OnClickListener() {
 					    public void onClick( DialogInterface dialog, int which) {
-					        dialog.dismiss();   //´İ±â
+					        dialog.dismiss();   //ë‹«ê¸°
 					    }
 					});
 			alert.show();
@@ -215,33 +215,33 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
     
 	
     public boolean onSubmitRecord(View view){
-    	// ³»¿ë ºóÄ­ È®ÀÎ
+    	// ë‚´ìš© ë¹ˆì¹¸ í™•ì¸
     	EditText editText = (EditText)findViewById(R.id.EditTextRecordContents);
     	EditText editMoney = (EditText)findViewById(R.id.EditTextRecordMoney);
     	if( editText.getText().length() == 0 || editMoney.getText().length() == 0 ){
     		AlertDialog.Builder alert = new AlertDialog.Builder(this);
-			alert.setTitle( "³»¿ë ¾øÀ½" );
-			alert.setMessage( "°¡°èºÎ ³»¿ëÀ» Ã¤¿öÁÖ¼¼¿ä." );
+			alert.setTitle( "ë‚´ìš© ì—†ìŒ" );
+			alert.setMessage( "ê°€ê³„ë¶€ ë‚´ìš©ì„ ì±„ì›Œì£¼ì„¸ìš”." );
 			alert.setPositiveButton(
-					 "´İ±â", new DialogInterface.OnClickListener() {
+					 "ë‹«ê¸°", new DialogInterface.OnClickListener() {
 					    public void onClick( DialogInterface dialog, int which) {
-					        dialog.dismiss();   //´İ±â
+					        dialog.dismiss();   //ë‹«ê¸°
 					    }
 					});
 			alert.show();
     		return false;
     	}
 
-		// ³¯Â¥ v »ç¿ë³»¿ª v Ä«µå or Çö±İ v ±İ¾× (v=°ø¹é)
+		// ë‚ ì§œ v ì‚¬ìš©ë‚´ì—­ v ì¹´ë“œ or í˜„ê¸ˆ v ê¸ˆì•¡ (v=ê³µë°±)
 		String contents = editText.getText().toString();
 		contents.replace(" ", "");
 		StringBuilder items = new StringBuilder();
 		items.append(mMonth+1).append("/")
 							.append(mDay).append(" ")
 							.append(contents).append("  ")
-							.append("Çö±İ ")
+							.append("í˜„ê¸ˆ ")
 							.append(editMoney.getText())
-							.append("¿ø")
+							.append("ì›")
 							.append(";");
 		Log.i("beonit", "write : " + items.toString());
 		return doSubmit(items.toString(), false);
@@ -249,7 +249,7 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 
     public boolean doSubmit(String items, boolean failSave ){
 		String id, passwd;
-    	// ³×ÀÌ¹ö °èÁ¤ ¼³Á¤
+    	// ë„¤ì´ë²„ ê³„ì • ì„¤ì •
     	SharedPreferences prefs = getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
 		id = prefs.getString("naverID", null);
 		try {
@@ -260,12 +260,12 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 		}
 		if( id == null || passwd == null || id.length() == 0 || passwd.length() == 0 ){
 			AlertDialog.Builder alert = new AlertDialog.Builder(this);
-			alert.setTitle( "°èÁ¤ ¾øÀ½" );
-			alert.setMessage( "³×ÀÌ¹ö °èÁ¤À» ¼³Á¤ÇØ ÁÖ¼¼¿ä\n½ÇÆĞÇÔ¿¡ ÀúÀåµÇÁö ¾Ê½À´Ï´Ù" );
+			alert.setTitle( "ê³„ì • ì—†ìŒ" );
+			alert.setMessage( "ë„¤ì´ë²„ ê³„ì •ì„ ì„¤ì •í•´ ì£¼ì„¸ìš”\nì‹¤íŒ¨í•¨ì— ì €ì¥ë˜ì§€ ì•ŠìŠµë‹ˆë‹¤" );
 			alert.setPositiveButton(
-					 "´İ±â", new DialogInterface.OnClickListener() {
+					 "ë‹«ê¸°", new DialogInterface.OnClickListener() {
 					    public void onClick( DialogInterface dialog, int which) {
-					        dialog.dismiss();   //´İ±â
+					        dialog.dismiss();   //ë‹«ê¸°
 					    }
 					});
 			alert.show();
@@ -276,12 +276,12 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 		// network state check
     	if( checkNetwork() == false ){
     		AlertDialog.Builder alert = new AlertDialog.Builder(this);
-			alert.setTitle( "Åë½Å ºÒ°¡´É" );
-			alert.setMessage( "½ÇÆĞÇÔ¿¡ ÀúÀåµÇÁö ¾Ê½À´Ï´Ù" );
+			alert.setTitle( "í†µì‹  ë¶ˆê°€ëŠ¥" );
+			alert.setMessage( "ì‹¤íŒ¨í•¨ì— ì €ì¥ë˜ì§€ ì•ŠìŠµë‹ˆë‹¤" );
 			alert.setPositiveButton(
-					 "´İ±â", new DialogInterface.OnClickListener() {
+					 "ë‹«ê¸°", new DialogInterface.OnClickListener() {
 					    public void onClick( DialogInterface dialog, int which) {
-					        dialog.dismiss();   //´İ±â
+					        dialog.dismiss();   //ë‹«ê¸°
 					    }
 					});
 			alert.show();
@@ -289,7 +289,7 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
     	}
 
     	// send thread and dialog start
-    	mProgressDialog = ProgressDialog.show(this, "°¡°èºÎ ¾²±â", "3G´Â ´õ ±â´Ù·Á ÁÖ¼¼¿ä\nÁ¢¼ÓÁß...", false);
+    	mProgressDialog = ProgressDialog.show(this, "ê°€ê³„ë¶€ ì“°ê¸°", "3GëŠ” ë” ê¸°ë‹¤ë ¤ ì£¼ì„¸ìš”\nì ‘ì†ì¤‘...", false);
     	mProgressDialog.setCancelable(true);
     	QuickWriter writer;
     	if( targetSite == TARGET_SITE.TARGET_ICACH ){
@@ -316,60 +316,60 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case QuickWriterNaver.WRITE_READY:
-				mProgressDialog.setMessage("3G´Â ´õ ±â´Ù·Á ÁÖ¼¼¿ä\nÁ¢¼Ó Áß...");
+				mProgressDialog.setMessage("3GëŠ” ë” ê¸°ë‹¤ë ¤ ì£¼ì„¸ìš”\nì ‘ì† ì¤‘...");
 				break;
 			case QuickWriterNaver.WRITE_LOGIN_ATTEMPT:
-				mProgressDialog.setMessage("3G´Â ´õ ±â´Ù·Á ÁÖ¼¼¿ä\n·Î±×ÀÎ ÆäÀÌÁö ·Îµå");
+				mProgressDialog.setMessage("3GëŠ” ë” ê¸°ë‹¤ë ¤ ì£¼ì„¸ìš”\në¡œê·¸ì¸ í˜ì´ì§€ ë¡œë“œ");
 				break;
 			case QuickWriterNaver.WRITE_LOGIN_SUCCESS:
-				mProgressDialog.setMessage("3G´Â ´õ ±â´Ù·Á ÁÖ¼¼¿ä\nÀÔ·Â ÆäÀÌÁö ·Îµå");
+				mProgressDialog.setMessage("3GëŠ” ë” ê¸°ë‹¤ë ¤ ì£¼ì„¸ìš”\nì…ë ¥ í˜ì´ì§€ ë¡œë“œ");
 				break;
 			case QuickWriterNaver.WRITE_WRITING:
-				mProgressDialog.setMessage("3G´Â ´õ ±â´Ù·Á ÁÖ¼¼¿ä\n°¡°èºÎ ³»¿ë ÀÔ·Â ");
+				mProgressDialog.setMessage("3GëŠ” ë” ê¸°ë‹¤ë ¤ ì£¼ì„¸ìš”\nê°€ê³„ë¶€ ë‚´ìš© ì…ë ¥ ");
 				break;
 			case QuickWriterNaver.WRITE_SUCCESS:
-				mProgressDialog.dismiss(); // ProgressDialog Á¾·á
+				mProgressDialog.dismiss(); // ProgressDialog ì¢…ë£Œ
 				alert = new AlertDialog.Builder(activity);
-				alert.setTitle( "ÀÔ·Â ¼º°ø" );
-				alert.setMessage( "ÀúÀåµÇ¾ú½À´Ï´Ù" );
+				alert.setTitle( "ì…ë ¥ ì„±ê³µ" );
+				alert.setMessage( "ì €ì¥ë˜ì—ˆìŠµë‹ˆë‹¤" );
 		    	EditText editText = (EditText)findViewById(R.id.EditTextRecordContents);
 		    	EditText editMoney = (EditText)findViewById(R.id.EditTextRecordMoney);
 				editText.setText("");
 				editMoney.setText("");
 				break;
 			case QuickWriterNaver.WRITE_LOGIN_FAIL:
-				mProgressDialog.dismiss(); // ProgressDialog Á¾·á
+				mProgressDialog.dismiss(); // ProgressDialog ì¢…ë£Œ
 				alert = new AlertDialog.Builder(activity);
-				alert.setTitle( "·Î±×ÀÎ ½ÇÆĞ" );
-				alert.setMessage( "¾ÆÀÌµğ ¾ÏÈ£¸¦ È®ÀÎÇØ ÁÖ¼¼¿ä" );
+				alert.setTitle( "ë¡œê·¸ì¸ ì‹¤íŒ¨" );
+				alert.setMessage( "ì•„ì´ë”” ì•”í˜¸ë¥¼ í™•ì¸í•´ ì£¼ì„¸ìš”" );
 				break;
 			case QuickWriterNaver.WRITE_FAIL:
-				mProgressDialog.dismiss(); // ProgressDialog Á¾·á
+				mProgressDialog.dismiss(); // ProgressDialog ì¢…ë£Œ
 				alert = new AlertDialog.Builder(activity);
-				alert.setTitle( "¾²±â ½ÇÆĞ" );
-				alert.setMessage( "´Ù½Ã ½ÃµµÇØ ÁÖ¼¼¿ä \nÀü¼Û ½ÇÆĞÇÔ¿¡ ÀúÀåµÇÁö ¾Ê½À´Ï´Ù." );
+				alert.setTitle( "ì“°ê¸° ì‹¤íŒ¨" );
+				alert.setMessage( "ë‹¤ì‹œ ì‹œë„í•´ ì£¼ì„¸ìš” \nì „ì†¡ ì‹¤íŒ¨í•¨ì— ì €ì¥ë˜ì§€ ì•ŠìŠµë‹ˆë‹¤." );
 				break;
 			case QuickWriterNaver.WRITE_FAIL_REGISTER:
-				mProgressDialog.dismiss(); // ProgressDialog Á¾·á
+				mProgressDialog.dismiss(); // ProgressDialog ì¢…ë£Œ
 				alert = new AlertDialog.Builder(activity);
-				alert.setTitle( "°¡°èºÎ °¡ÀÔ ¾ÈµÊ" );
-				alert.setMessage( "ÇöÀç ¾ÛÀ» ´İ°í ¸ğ¹ÙÀÏ À¥/PC ·Î ¸ÕÀú ¾à°üµ¿ÀÇ¸¦ Ã³¸®ÇÏ°í Á¢¼ÓÇØ ÁÖ¼¼¿ä." );
+				alert.setTitle( "ê°€ê³„ë¶€ ê°€ì… ì•ˆë¨" );
+				alert.setMessage( "í˜„ì¬ ì•±ì„ ë‹«ê³  ëª¨ë°”ì¼ ì›¹/PC ë¡œ ë¨¼ì € ì•½ê´€ë™ì˜ë¥¼ ì²˜ë¦¬í•˜ê³  ì ‘ì†í•´ ì£¼ì„¸ìš”." );
 				break;
 			case QuickWriterNaver.TIME_OUT:
-				mProgressDialog.dismiss(); // ProgressDialog Á¾·á
+				mProgressDialog.dismiss(); // ProgressDialog ì¢…ë£Œ
 				alert = new AlertDialog.Builder(activity);
-				alert.setTitle( "¾²±â ½ÇÆĞ" );
-				alert.setMessage( "´Ù½Ã ½ÃµµÇØ ÁÖ¼¼¿ä\n½Ã°£ÀÌ ¿À·¡°É¸³´Ï´Ù." );
+				alert.setTitle( "ì“°ê¸° ì‹¤íŒ¨" );
+				alert.setMessage( "ë‹¤ì‹œ ì‹œë„í•´ ì£¼ì„¸ìš”\nì‹œê°„ì´ ì˜¤ë˜ê±¸ë¦½ë‹ˆë‹¤." );
 				break;
 			default:
 				break;
 			}
 			if( alert != null ){
-		    	// ÆË¾÷ ¶ç¿ì±â
+		    	// íŒì—… ë„ìš°ê¸°
 				alert.setPositiveButton(
-					 "´İ±â", new DialogInterface.OnClickListener() {
+					 "ë‹«ê¸°", new DialogInterface.OnClickListener() {
 					    public void onClick( DialogInterface dialog, int which) {
-					        dialog.dismiss();   //´İ±â
+					        dialog.dismiss();   //ë‹«ê¸°
 					    }
 					});
 				alert.show();
@@ -410,9 +410,9 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
     	recordDate.setText(
             new StringBuilder()
                     // Month is 0 based so add 1
-            		.append(mYear).append("³â ")
-                    .append(mMonth + 1).append("¿ù ")
-                    .append(mDay).append("ÀÏ")
+            		.append(mYear).append("ë…„ ")
+                    .append(mMonth + 1).append("ì›” ")
+                    .append(mDay).append("ì¼")
                     );
     }
 
@@ -441,24 +441,24 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 		AlertDialog.Builder alert = null;
 		if( id == null || passwd == null || id.length() == 0 || passwd.length() == 0 ){
 			alert = new AlertDialog.Builder(this);
-			alert.setTitle( "°èÁ¤ Á¤º¸ ¾øÀ½" );
-			alert.setMessage( "°èÁ¤ Á¤º¸¸¦ ÀÔ·ÂÇØ ÁÖ¼¼¿ä." );
+			alert.setTitle( "ê³„ì • ì •ë³´ ì—†ìŒ" );
+			alert.setMessage( "ê³„ì • ì •ë³´ë¥¼ ì…ë ¥í•´ ì£¼ì„¸ìš”." );
 			hasError = true;
 			return;
 		}
 		if( checkNetwork() == false ){
 			alert = new AlertDialog.Builder(this);
-			alert.setTitle( "Åë½Å ºÒ°¡´É" );
-			alert.setMessage( "DB¿¡ ÀúÀåµË´Ï´Ù." );
+			alert.setTitle( "í†µì‹  ë¶ˆê°€ëŠ¥" );
+			alert.setMessage( "DBì— ì €ì¥ë©ë‹ˆë‹¤." );
 			hasError = true;
 			return;
 		}
 		if( hasError ){
 			try{
 				alert.setPositiveButton(
-						 "´İ±â", new DialogInterface.OnClickListener() {
+						 "ë‹«ê¸°", new DialogInterface.OnClickListener() {
 						    public void onClick( DialogInterface dialog, int which) {
-						    	dialog.dismiss();   //´İ±â
+						    	dialog.dismiss();   //ë‹«ê¸°
 						    }
 						});
 				alert.show();
@@ -482,17 +482,17 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 	     if (keyCode == KeyEvent.KEYCODE_BACK && mTabHost.getCurrentTab() == 1 ) {
 	    	 Builder alert = new AlertDialog.Builder(this);
-	    	 alert.setTitle( "¾ÛÀ» Á¾·á ÇÕ´Ï±î?" );
-	    	 alert.setMessage( "ÇÑ¹ø ´õ ´©¸£¸é Ã¢ÀÌ »ç¶óÁı´Ï´Ù." );
+	    	 alert.setTitle( "ì•±ì„ ì¢…ë£Œ í•©ë‹ˆê¹Œ?" );
+	    	 alert.setMessage( "í•œë²ˆ ë” ëˆ„ë¥´ë©´ ì°½ì´ ì‚¬ë¼ì§‘ë‹ˆë‹¤." );
 	    	 alert.setPositiveButton(
-					 "Á¾·á", new DialogInterface.OnClickListener() {
+					 "ì¢…ë£Œ", new DialogInterface.OnClickListener() {
 					    public void onClick( DialogInterface dialog, int which) {
 					    	finish();
 					    }
 					});
-	    	 alert.setNegativeButton( "³×ÀÌ¹ö µÚ·Î °¡±â", new DialogInterface.OnClickListener() {
+	    	 alert.setNegativeButton( "ë„¤ì´ë²„ ë’¤ë¡œ ê°€ê¸°", new DialogInterface.OnClickListener() {
 					    public void onClick( DialogInterface dialog, int which) {
-					    	// ³×ÀÌ¹ö µÚ·Î°¡±â
+					    	// ë„¤ì´ë²„ ë’¤ë¡œê°€ê¸°
 					    	WebView wb = (WebView)findViewById(R.id.naverView);
 					    	if( wb.canGoBack() )
 					    		wb.goBack();

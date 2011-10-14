@@ -23,14 +23,14 @@ public class WebViewClientIcash extends WebViewClient {
 	public void onPageStarted(WebView view, String url, Bitmap favicon){
 		if( view.willNotDraw() && mProgressLoginDialog == null ){
 			try{
-				mProgressLoginDialog = ProgressDialog.show(view.getContext(), "°¡°èºÎ ·Îµù", "3G´Â ´õ ±â´Ù·Á ÁÖ¼¼¿ä\n·Î±×ÀÎ ÆäÀÌÁö ·Îµù", false);
+				mProgressLoginDialog = ProgressDialog.show(view.getContext(), "ê°€ê³„ë¶€ ë¡œë”©", "3GëŠ” ë” ê¸°ë‹¤ë ¤ ì£¼ì„¸ìš”\në¡œê·¸ì¸ í˜ì´ì§€ ë¡œë”©", false);
 				mProgressLoginDialog.setCancelable(true);
 			}catch(Exception e){
 				Log.e("beonit", "dialog error");
 				e.printStackTrace();
 			}
 		}else if( !view.willNotDraw() && mProgressLoadingDialog == null && mProgressLoginDialog == null ){
-			mProgressLoadingDialog = ProgressDialog.show(view.getContext(), "°¡°èºÎ À¥ÆäÀÌÁö ·Îµù", " 3G´Â ´õ ±â´Ù·Á ÁÖ¼¼¿ä\nµÚ·Î°¡±â ¹öÆ°À» ´©¸£¸é »ç¶óÁı´Ï´Ù.", false);
+			mProgressLoadingDialog = ProgressDialog.show(view.getContext(), "ê°€ê³„ë¶€ ì›¹í˜ì´ì§€ ë¡œë”©", " 3GëŠ” ë” ê¸°ë‹¤ë ¤ ì£¼ì„¸ìš”\në’¤ë¡œê°€ê¸° ë²„íŠ¼ì„ ëˆ„ë¥´ë©´ ì‚¬ë¼ì§‘ë‹ˆë‹¤.", false);
 			mProgressLoadingDialog.setCancelable(true);
 		}
 	}
@@ -56,7 +56,7 @@ public class WebViewClientIcash extends WebViewClient {
 				view.addJavascriptInterface(iJS, "HTMLOUT");
 				writeState = QuickWriter.WRITE_LOGIN_ATTEMPT;
 				if( mProgressLoginDialog != null )
-					mProgressLoginDialog.setMessage("3G´Â ´õ ±â´Ù·Á ÁÖ¼¼¿ä\n·Î±×ÀÎ ½Ãµµ");
+					mProgressLoginDialog.setMessage("3GëŠ” ë” ê¸°ë‹¤ë ¤ ì£¼ì„¸ìš”\në¡œê·¸ì¸ ì‹œë„");
 				view.reload();
 				break;
 			case QuickWriter.WRITE_LOGIN_ATTEMPT:
@@ -75,7 +75,7 @@ public class WebViewClientIcash extends WebViewClient {
 	final class JSInterfaceICash {
 		public void checkLoginResult(final String html){
 			Log.i("beonit", "checkLogin : " + html);
-			if( html.contains("±âÅ¸¼³Á¤") ){
+			if( html.contains("ê¸°íƒ€ì„¤ì •") ){
 				writeState = QuickWriter.WRITE_LOGIN_SUCCESS;
 			}
 			else{
@@ -97,9 +97,9 @@ public class WebViewClientIcash extends WebViewClient {
 		alert.setTitle( title );
 		alert.setMessage( message );
 		alert.setPositiveButton(
-				 "´İ±â", new DialogInterface.OnClickListener() {
+				 "ë‹«ê¸°", new DialogInterface.OnClickListener() {
 				    public void onClick( DialogInterface dialog, int which) {
-				        dialog.dismiss();   //´İ±â
+				        dialog.dismiss();   //ë‹«ê¸°
 				    }
 				});
 		alert.show();
@@ -107,7 +107,7 @@ public class WebViewClientIcash extends WebViewClient {
 	
 	public void onReceivedError(WebView view, int errorCode, String description, String failingUrl){
 		closeDialog();
-		errorNotify(view, "·Îµù ¿¡·¯", "³×ÀÌ¹ö ·Îµù¿¡ ½ÇÆĞÇß½À´Ï´Ù" );
+		errorNotify(view, "ë¡œë”© ì—ëŸ¬", "ë„¤ì´ë²„ ë¡œë”©ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤" );
 	}
 
 }

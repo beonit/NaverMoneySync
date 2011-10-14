@@ -27,7 +27,7 @@ public class QuickWriterNaver extends QuickWriter implements IQuickWriter {
 		mWebView.loadUrl("https://nid.naver.com/nidlogin.login?svctype=262144&url=http://moneybook.naver.com/m/write.nhn?method=quick");
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.addJavascriptInterface(new JSInterfaceNaver(), "HTMLOUT");
-        sendProgressNotify("·Î±×ÀÎ ÁØºñ");
+        sendProgressNotify("ë¡œê·¸ì¸ ì¤€ë¹„");
         return true;
 	}
 	
@@ -42,17 +42,17 @@ public class QuickWriterNaver extends QuickWriter implements IQuickWriter {
 	    		view.loadUrl("javascript:id.value='"+ id +"'");
 	    		view.loadUrl("javascript:pw.value='"+ passwd +"'");
 	    		view.loadUrl("javascript:loginform.submit()");
-	    		sendProgressNotify("·Î±×ÀÎ ½Ãµµ");
+	    		sendProgressNotify("ë¡œê·¸ì¸ ì‹œë„");
     		}
     		else if( url.equals("https://nid.naver.com/nidlogin.login?svctype=262144") ){
     			writeState = WRITE_LOGIN_ATTEMPT;
     			view.loadUrl("javascript:window.HTMLOUT.showHTML('' + document.body.getElementsByTagName('span')[3].innerHTML);");
-    			sendProgressNotify("·Î±×ÀÎ Áß");
+    			sendProgressNotify("ë¡œê·¸ì¸ ì¤‘");
     		}
     		else if( url.contains("http://static.nid.naver.com/login/sso/finalize.nhn") ){
     			Log.v("beonit", "login... success");
     			writeState = WRITE_LOGIN_SUCCESS;
-    			sendProgressNotify("·Î±×ÀÎ ·Î±×ÀÎ ¿Ï·á");
+    			sendProgressNotify("ë¡œê·¸ì¸ ë¡œê·¸ì¸ ì™„ë£Œ");
     		}
     		else if( url.equals("http://moneybook.naver.com/m/write.nhn?method=quick") ){
     			view.loadUrl("javascript:window.HTMLOUT.showHTML(items.value)");
@@ -60,7 +60,7 @@ public class QuickWriterNaver extends QuickWriter implements IQuickWriter {
     			view.loadUrl("javascript:window.HTMLOUT.showHTML(items.value)");
 	    		view.loadUrl("javascript:writeForm.submit()");
 	    		writeState = WRITE_WRITING;
-	    		sendProgressNotify("°¡°èºÎ¿¡ ¾²±â");
+	    		sendProgressNotify("ê°€ê³„ë¶€ì— ì“°ê¸°");
     		}
     		else if( url.equals("http://moneybook.naver.com/m/smry.nhn")){
     			Log.v("beonit", "write finish");
@@ -68,19 +68,19 @@ public class QuickWriterNaver extends QuickWriter implements IQuickWriter {
     			view.destroy();
     			view = null;
     			writeState = WRITE_SUCCESS;
-    			sendProgressNotify("¾²±â ¿Ï·á");
+    			sendProgressNotify("ì“°ê¸° ì™„ë£Œ");
     		}
     		else if( url.equals("http://moneybook.naver.com/m/mbookUser.nhn")){
     			view.destroy();
     			view = null;
-    			sendFail("°¡°èºÎ ¾à°üµ¿ÀÇ ¾ÈµÊ");
+    			sendFail("ê°€ê³„ë¶€ ì•½ê´€ë™ì˜ ì•ˆë¨");
     			writeState = WRITE_FAIL_REGISTER;
     		}
     		else{
     			Log.e("boenit", "fail : " + url);
     			view.destroy();
     			view = null;
-    			sendFail("¿øÀÎÀ» ¸ğ¸§");
+    			sendFail("ì›ì¸ì„ ëª¨ë¦„");
     			writeState = WRITE_FAIL;
     		}
     	}
@@ -89,9 +89,9 @@ public class QuickWriterNaver extends QuickWriter implements IQuickWriter {
 	final class JSInterfaceNaver {
 	    public void showHTML(String html) {
 	    	Log.v("beonit", "show html : " + html);
-	        if( html.contains("¿À·ù") ){
+	        if( html.contains("ì˜¤ë¥˜") ){
 	        	writeState = WRITE_LOGIN_FAIL;
-	        	sendFail("·Î±×ÀÎ ½ÇÆĞ");
+	        	sendFail("ë¡œê·¸ì¸ ì‹¤íŒ¨");
 	        }
 	    }  
 	}

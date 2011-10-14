@@ -29,7 +29,7 @@ public class ProgressThread extends Thread {
     			state = newState;
     			if( mHandler != null )
     				mHandler.sendEmptyMessage(state);
-    			i = 0; // ÇÑ ½ºÅÜ¸¶´Ù 10ÃÊ¾¿ ±â´Ù¸± ¼ö ÀÖ´Ù.
+    			i = 0; // í•œ ìŠ¤í…ë§ˆë‹¤ 10ì´ˆì”© ê¸°ë‹¤ë¦´ ìˆ˜ ìˆë‹¤.
     		}else
     			continue;
     		if( state == QuickWriterNaver.WRITE_SUCCESS || state == QuickWriterNaver.WRITE_FAIL || state == QuickWriterNaver.WRITE_LOGIN_FAIL || state == QuickWriterNaver.WRITE_FAIL_REGISTER ){

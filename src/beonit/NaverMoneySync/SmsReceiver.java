@@ -28,7 +28,7 @@ public class SmsReceiver extends BroadcastReceiver {
 		Log.w("beonit", "smsReceiver onReceive");
 		if (intent.getAction().equals(SMS_RECV)) {
 			
-			// Á¤º¸ °®Ãß±â
+			// ì •ë³´ ê°–ì¶”ê¸°
 			Log.w("beonit", "SMS_RECV");
 			Bundle bundle = intent.getExtras();
 			if (bundle == null) {
@@ -52,19 +52,19 @@ public class SmsReceiver extends BroadcastReceiver {
 		    	return;
 		    }
 		    
-		    // ±âÁ¸ SMS ¸¦ ºÎ¸¥´Ù.
+		    // ê¸°ì¡´ SMS ë¥¼ ë¶€ë¥¸ë‹¤.
 			SharedPreferences prefs = context.getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
 			StringBuilder item = new StringBuilder(prefs.getString("items", "")).append("; ");
-			// ¿©·¯°³ÀÇ sms°¡ µ¿½Ã¿¡ ¿Ã °æ¿ì¸¦ »ı°¢ÇÑ´Ù.
+			// ì—¬ëŸ¬ê°œì˜ smsê°€ ë™ì‹œì— ì˜¬ ê²½ìš°ë¥¼ ìƒê°í•œë‹¤.
 			boolean cardMsg = false;
 			StringBuffer numStr;
 		    for( SmsMessage msg : messages ) {
-		    	// ÀüÈ­¹øÈ£¿¡¼­ ¼ıÀÚ¸¸ »Ì¾Æ¿Â´Ù.
+		    	// ì „í™”ë²ˆí˜¸ì—ì„œ ìˆ«ìë§Œ ë½‘ì•„ì˜¨ë‹¤.
 		    	numStr = new StringBuffer();
 		    	for( char c : msg.getDisplayOriginatingAddress().toCharArray() )
 					if( Character.isDigit(c) )
 						numStr.append(c);
-				// Ä«µå¹®ÀÚÀÎÁö È®ÀÎ
+				// ì¹´ë“œë¬¸ìì¸ì§€ í™•ì¸
 		        if( !isCardSender( numStr.toString(), context ) )
 		        	continue;
 		        cardMsg = true;
@@ -92,26 +92,26 @@ public class SmsReceiver extends BroadcastReceiver {
 				e.printStackTrace();
 			}
 
-			// °èÁ¤ Á¤º¸°¡ ¾øÀ¸¸é ³¡.
+			// ê³„ì • ì •ë³´ê°€ ì—†ìœ¼ë©´ ë.
 			if( id == null || passwd == null || id.length() == 0 || passwd.length() == 0 ){
-				Log.i("beonit", "id/pw Á¤º¸ ¾øÀ½");
-		    	Notification notification = new Notification(R.drawable.icon, "°èÁ¤ Á¤º¸°¡ ¾ø½À´Ï´Ù.", 0);
+				Log.i("beonit", "id/pw ì •ë³´ ì—†ìŒ");
+		    	Notification notification = new Notification(R.drawable.icon, "ê³„ì • ì •ë³´ê°€ ì—†ìŠµë‹ˆë‹¤.", 0);
 		    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
 		    	Intent failIntent = new Intent(context, ViewMain.class);
 		    	failIntent.putExtra("goto", 1);
 		    	PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, failIntent, 0);
-		    	notification.setLatestEventInfo(context, "°¡°èºÎ ¾²±â ½ÇÆĞ", "°èÁ¤ Á¤º¸°¡ ¾ø½À´Ï´Ù.", pendingIntent);
+		    	notification.setLatestEventInfo(context, "ê°€ê³„ë¶€ ì“°ê¸° ì‹¤íŒ¨", "ê³„ì • ì •ë³´ê°€ ì—†ìŠµë‹ˆë‹¤.", pendingIntent);
 				NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 		    	nm.notify(ViewMain.NOTI_ID, notification);
 		    	return;
 			}else if(!checkNetwork(context)){
-				Log.i("beonit", "³×Æ®¿öÅ© ¾ÈµÊ");
-		    	Notification notification = new Notification(R.drawable.icon, "ÀÎÅÍ³İ »ç¿ë ºÒ°¡", 0);
+				Log.i("beonit", "ë„¤íŠ¸ì›Œí¬ ì•ˆë¨");
+		    	Notification notification = new Notification(R.drawable.icon, "ì¸í„°ë„· ì‚¬ìš© ë¶ˆê°€", 0);
 		    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
 		    	Intent failIntent = new Intent(context, ViewMain.class);
 		    	failIntent.putExtra("goto", 1);
 		    	PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, failIntent, 0);
-		    	notification.setLatestEventInfo(context, "°¡°èºÎ ¾²±â ½ÇÆĞ", "ÀÎÅÍ³İ »ç¿ë ºÒ°¡ »óÅÂ", pendingIntent);
+		    	notification.setLatestEventInfo(context, "ê°€ê³„ë¶€ ì“°ê¸° ì‹¤íŒ¨", "ì¸í„°ë„· ì‚¬ìš© ë¶ˆê°€ ìƒíƒœ", pendingIntent);
 				NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 		    	nm.notify(ViewMain.NOTI_ID, notification);
 			    return;
@@ -133,7 +133,7 @@ public class SmsReceiver extends BroadcastReceiver {
 		nums.add("15883000");    // KEB    
 		nums.add("15884000");    // WOORI
 		nums.add("15885000");    // WOORI
-		nums.add("0220085000");  // WOORI - ¿Ü±¹
+		nums.add("0220085000");  // WOORI - ì™¸êµ­
 		nums.add("15884000");    // BC
 		nums.add("15888100");    // LOTTE
 		nums.add("15887000");    // CITY
@@ -144,47 +144,47 @@ public class SmsReceiver extends BroadcastReceiver {
 		nums.add("15881788");    // KB
 		nums.add("15889999");    // KB
 		nums.add("16449999");    // KB
-		nums.add("15882100");    // ³óÇù
-		nums.add("15881600");	 // ³óÇù2
+		nums.add("15882100");    // ë†í˜‘
+		nums.add("15881600");	 // ë†í˜‘2
 		nums.add("15776000");    // HYUNDAI
 		nums.add("15776200");    // HYUNDAI
-		nums.add("15778000");    // ½ÅÇÑ
-		nums.add("15884560");    // Çö´ë ¹éÈ­Á¡ Ä«µå
-		nums.add("15880056");    // µ¿¾çÁ¾±İ
-		nums.add("15773997");    // µ¿¾çÁ¾±İ W Á¦ÈŞÄ«µå
-		nums.add("15881155");    // ÇÏ³ª sk
-		nums.add("15881599");    // Á¦ÀÏÀºÇà
-		// µ¿¾ç »ï¼º
-		nums.add("15881515");    // ±â¾÷ÀºÇà
-		// Á¦ÁÖÀºÇà
-		// ±¤ÁÖÀºÇà
-		nums.add("15881515");   // ¼öÇù
-		// ÃàÇù
-		nums.add("15888801");   // »õ¸¶À» ±İ°í
-		nums.add("15881900");   // »õ¸¶À» ±İ°í
-		nums.add("15887000");   // ÇÑ¹ÌÀºÇà
-		nums.add("15884114");   // Á¶ÈïÀºÇà		
+		nums.add("15778000");    // ì‹ í•œ
+		nums.add("15884560");    // í˜„ëŒ€ ë°±í™”ì  ì¹´ë“œ
+		nums.add("15880056");    // ë™ì–‘ì¢…ê¸ˆ
+		nums.add("15773997");    // ë™ì–‘ì¢…ê¸ˆ W ì œíœ´ì¹´ë“œ
+		nums.add("15881155");    // í•˜ë‚˜ sk
+		nums.add("15881599");    // ì œì¼ì€í–‰
+		// ë™ì–‘ ì‚¼ì„±
+		nums.add("15881515");    // ê¸°ì—…ì€í–‰
+		// ì œì£¼ì€í–‰
+		// ê´‘ì£¼ì€í–‰
+		nums.add("15881515");   // ìˆ˜í˜‘
+		// ì¶•í˜‘
+		nums.add("15888801");   // ìƒˆë§ˆì„ ê¸ˆê³ 
+		nums.add("15881900");   // ìƒˆë§ˆì„ ê¸ˆê³ 
+		nums.add("15887000");   // í•œë¯¸ì€í–‰
+		nums.add("15884114");   // ì¡°í¥ì€í–‰		
 		nums.add("01094858469"); // test
 		
 		for( String num : nums ){
 			if( sender.contains(num) ){
 //				Log.i("beonit", "cell phone num matched");
-//		    	Notification notification = new Notification(R.drawable.icon, "Ä«µå ¹®ÀÚ ¼ö½Å", 0);
+//		    	Notification notification = new Notification(R.drawable.icon, "ì¹´ë“œ ë¬¸ì ìˆ˜ì‹ ", 0);
 //		    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
 //		    	Intent successIntent = new Intent();
 //		    	PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, successIntent, 0);
-//		    	notification.setLatestEventInfo(context, "ÀüÈ­¹øÈ£", num, pendingIntent);
+//		    	notification.setLatestEventInfo(context, "ì „í™”ë²ˆí˜¸", num, pendingIntent);
 //				NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 //		    	nm.notify(ViewMain.NOTI_ID, notification);
 				return true;
 			}
 		}
 //		Log.i("beonit", "cell phone num not matched");
-//    	Notification notification = new Notification(R.drawable.icon, "±×³É ¹®ÀÚ ¼ö½Å", 0);
+//    	Notification notification = new Notification(R.drawable.icon, "ê·¸ëƒ¥ ë¬¸ì ìˆ˜ì‹ ", 0);
 //    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
 //    	Intent successIntent = new Intent();
 //    	PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, successIntent, 0);
-//    	notification.setLatestEventInfo(context, "Ä«µå»ç ¹øÈ£ ¾Æ´Ô : " + sender, "´©¸£¸é »ç¶óÁı´Ï´Ù.", pendingIntent);
+//    	notification.setLatestEventInfo(context, "ì¹´ë“œì‚¬ ë²ˆí˜¸ ì•„ë‹˜ : " + sender, "ëˆ„ë¥´ë©´ ì‚¬ë¼ì§‘ë‹ˆë‹¤.", pendingIntent);
 //		NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 //    	nm.notify(ViewMain.NOTI_ID, notification);
 		return false;

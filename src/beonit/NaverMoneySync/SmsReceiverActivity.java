@@ -36,7 +36,7 @@ public class SmsReceiverActivity extends Activity {
 			Log.e("beonit", "simple crypto decrypt fail");
 			e.printStackTrace();
 		}
-		// Àü¼Û
+		// ì „ì†¡
 		Log.i("beonit", "recv to remote service");
 	    writer = new QuickWriterNaver(id, passwd, this);
 		writer.setFailSave(true);
@@ -49,11 +49,11 @@ public class SmsReceiverActivity extends Activity {
 			public void onCancel(DialogInterface dialog){
 				// notify
 				Log.i("beonit", "user cancel writing to naver");
-		    	Notification notification = new Notification(R.drawable.icon, "»ç¿ëÀÚ ÀÔ·Â Ãë¼Ò", 0);
+		    	Notification notification = new Notification(R.drawable.icon, "ì‚¬ìš©ì ì…ë ¥ ì·¨ì†Œ", 0);
 		    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
 		    	Intent cancelIntent = new Intent();
 		    	PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, cancelIntent, 0);
-		    	notification.setLatestEventInfo(getContext(), "»ç¿ëÀÚ ÀÔ·Â Ãë¼Ò", "´ç½ÅÀÌ ³×ÀÌ¹ö ÀÔ·ÂÀ» Ãë¼ÒÇß½À´Ï´Ù", pendingIntent);
+		    	notification.setLatestEventInfo(getContext(), "ì‚¬ìš©ì ì…ë ¥ ì·¨ì†Œ", "ë‹¹ì‹ ì´ ë„¤ì´ë²„ ì…ë ¥ì„ ì·¨ì†Œí–ˆìŠµë‹ˆë‹¤", pendingIntent);
 				NotificationManager nm = (NotificationManager)getContext().getSystemService(Context.NOTIFICATION_SERVICE);
 		    	nm.notify(ViewMain.NOTI_ID, notification);
 				
@@ -62,7 +62,7 @@ public class SmsReceiverActivity extends Activity {
 				activity.finish();
 			}
 		};
-		mProgressDialog = ProgressDialog.show(this, "°¡°èºÎ ¾²±â", "3G´Â ´õ ±â´Ù·Á ÁÖ¼¼¿ä\nÃ¢À» ¾ø¾Ö·Á¸é µÚ·Î°¡±â ¹öÆ°\nÃë¼ÒÇØµµ ÀÔ·ÂÀº °è¼Ó ÁøÇàµË´Ï´Ù.", false, true , listenerCancel);
+		mProgressDialog = ProgressDialog.show(this, "ê°€ê³„ë¶€ ì“°ê¸°", "3GëŠ” ë” ê¸°ë‹¤ë ¤ ì£¼ì„¸ìš”\nì°½ì„ ì—†ì• ë ¤ë©´ ë’¤ë¡œê°€ê¸° ë²„íŠ¼\nì·¨ì†Œí•´ë„ ì…ë ¥ì€ ê³„ì† ì§„í–‰ë©ë‹ˆë‹¤.", false, true , listenerCancel);
 	}
 	
 	@Override
@@ -80,35 +80,35 @@ public class SmsReceiverActivity extends Activity {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case QuickWriterNaver.WRITE_READY:
-				mProgressDialog.setMessage("3G´Â ´õ ±â´Ù·Á ÁÖ¼¼¿ä\nÁ¢¼Ó Áß...");
+				mProgressDialog.setMessage("3GëŠ” ë” ê¸°ë‹¤ë ¤ ì£¼ì„¸ìš”\nì ‘ì† ì¤‘...");
 				break;
 			case QuickWriterNaver.WRITE_LOGIN_ATTEMPT:
-				mProgressDialog.setMessage("3G´Â ´õ ±â´Ù·Á ÁÖ¼¼¿ä\n·Î±×ÀÎ ÆäÀÌÁö ·Îµå");
+				mProgressDialog.setMessage("3GëŠ” ë” ê¸°ë‹¤ë ¤ ì£¼ì„¸ìš”\në¡œê·¸ì¸ í˜ì´ì§€ ë¡œë“œ");
 				break;
 			case QuickWriterNaver.WRITE_LOGIN_SUCCESS:
-				mProgressDialog.setMessage("3G´Â ´õ ±â´Ù·Á ÁÖ¼¼¿ä\nÀÔ·Â ÆäÀÌÁö ·Îµå");
+				mProgressDialog.setMessage("3GëŠ” ë” ê¸°ë‹¤ë ¤ ì£¼ì„¸ìš”\nì…ë ¥ í˜ì´ì§€ ë¡œë“œ");
 				break;
 			case QuickWriterNaver.WRITE_WRITING:
-				mProgressDialog.setMessage("3G´Â ´õ ±â´Ù·Á ÁÖ¼¼¿ä\n°¡°èºÎ ³»¿ë ÀÔ·Â ");
+				mProgressDialog.setMessage("3GëŠ” ë” ê¸°ë‹¤ë ¤ ì£¼ì„¸ìš”\nê°€ê³„ë¶€ ë‚´ìš© ì…ë ¥ ");
 				break;
 			case QuickWriterNaver.WRITE_SUCCESS:
-				mProgressDialog.dismiss(); // ProgressDialog Á¾·á
+				mProgressDialog.dismiss(); // ProgressDialog ì¢…ë£Œ
 				activity.finish();
 				break;
 			case QuickWriterNaver.WRITE_LOGIN_FAIL:
-				mProgressDialog.dismiss(); // ProgressDialog Á¾·á
+				mProgressDialog.dismiss(); // ProgressDialog ì¢…ë£Œ
 				activity.finish();
 				break;
 			case QuickWriterNaver.WRITE_FAIL:
-				mProgressDialog.dismiss(); // ProgressDialog Á¾·á
+				mProgressDialog.dismiss(); // ProgressDialog ì¢…ë£Œ
 				activity.finish();
 				break;
 			case QuickWriterNaver.WRITE_FAIL_REGISTER:
-				mProgressDialog.dismiss(); // ProgressDialog Á¾·á
+				mProgressDialog.dismiss(); // ProgressDialog ì¢…ë£Œ
 				activity.finish();
 				break;
 			case QuickWriterNaver.TIME_OUT:
-				mProgressDialog.dismiss(); // ProgressDialog Á¾·á
+				mProgressDialog.dismiss(); // ProgressDialog ì¢…ë£Œ
 				activity.finish();
 				break;
 			default:
