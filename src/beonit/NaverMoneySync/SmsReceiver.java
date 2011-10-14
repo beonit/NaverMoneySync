@@ -61,14 +61,14 @@ public class SmsReceiver extends BroadcastReceiver {
 		    for( SmsMessage msg : messages ) {
 		    	// 전화번호에서 숫자만 뽑아온다.
 		    	numStr = new StringBuffer();
-				for( char c : msg.getOriginatingAddress().toCharArray() )
+		    	for( char c : msg.getDisplayOriginatingAddress().toCharArray() )
 					if( Character.isDigit(c) )
 						numStr.append(c);
 				// 카드문자인지 확인
 		        if( !isCardSender( numStr.toString(), context ) )
 		        	continue;
 		        cardMsg = true;
-		        Log.v("beonit", "sender : " + msg.getOriginatingAddress());
+		        Log.v("beonit", "sender : " + numStr.toString());
 		        Log.v("beonit", "msg : " + msg.getDisplayMessageBody());
 		        item.append( msg.getDisplayMessageBody().replace("\n", " ").replace("\r", " ") + "; " );
 		    }
@@ -168,25 +168,25 @@ public class SmsReceiver extends BroadcastReceiver {
 		
 		for( String num : nums ){
 			if( sender.contains(num) ){
-				Log.i("beonit", "cell phone num matched");
-		    	Notification notification = new Notification(R.drawable.icon, "카드 문자 수신", 0);
-		    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
-		    	Intent successIntent = new Intent();
-		    	PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, successIntent, 0);
-		    	notification.setLatestEventInfo(context, "전화번호", num, pendingIntent);
-				NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-		    	nm.notify(ViewMain.NOTI_ID, notification);
+//				Log.i("beonit", "cell phone num matched");
+//		    	Notification notification = new Notification(R.drawable.icon, "카드 문자 수신", 0);
+//		    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
+//		    	Intent successIntent = new Intent();
+//		    	PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, successIntent, 0);
+//		    	notification.setLatestEventInfo(context, "전화번호", num, pendingIntent);
+//				NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+//		    	nm.notify(ViewMain.NOTI_ID, notification);
 				return true;
 			}
 		}
-		Log.i("beonit", "cell phone num not matched");
-    	Notification notification = new Notification(R.drawable.icon, "그냥 문자 수신", 0);
-    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
-    	Intent successIntent = new Intent();
-    	PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, successIntent, 0);
-    	notification.setLatestEventInfo(context, "카드사 전화번호 아님", "누르시면 사라집니다.", pendingIntent);
-		NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-    	nm.notify(ViewMain.NOTI_ID, notification);
+//		Log.i("beonit", "cell phone num not matched");
+//    	Notification notification = new Notification(R.drawable.icon, "그냥 문자 수신", 0);
+//    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
+//    	Intent successIntent = new Intent();
+//    	PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, successIntent, 0);
+//    	notification.setLatestEventInfo(context, "카드사 번호 아님 : " + sender, "누르면 사라집니다.", pendingIntent);
+//		NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+//    	nm.notify(ViewMain.NOTI_ID, notification);
 		return false;
 	}
 	
