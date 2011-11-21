@@ -138,6 +138,7 @@ public class SmsReceiver extends BroadcastReceiver {
 		nums.add("15888100");    // LOTTE
 		nums.add("15887000");    // CITY
 		nums.add("15881000");    // CITY
+		nums.add("15661000");	 // CITY
 		nums.add("15887200");    // ?
 		nums.add("15991155");    // HANA
 		nums.add("15991111");    // HANA
@@ -160,11 +161,16 @@ public class SmsReceiver extends BroadcastReceiver {
 		// 광주은행
 		nums.add("15881515");   // 수협
 		// 축협
+		// 신한카드
 		nums.add("15888801");   // 새마을 금고
 		nums.add("15881900");   // 새마을 금고
 		nums.add("15887000");   // 한미은행
 		nums.add("15884114");   // 조흥은행		
 		nums.add("01094858469"); // test
+		nums.add("15447000");	// 신한카드
+		nums.add("15447200");	// 신한카드
+		nums.add("15882588");   // 기업은행
+		nums.add("15662566");   // 기업은행
 		
 		for( String num : nums ){
 			if( sender.contains(num) ){
