@@ -53,7 +53,7 @@ public class SmsReceiverActivity extends Activity {
 		    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
 		    	Intent cancelIntent = new Intent();
 		    	PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, cancelIntent, 0);
-		    	notification.setLatestEventInfo(getContext(), "사용자 입력 취소", "당신이 네이버 입력을 취소했습니다", pendingIntent);
+		    	notification.setLatestEventInfo(getContext(), "사용자 입력 취소", "다음번에 자동으로 함께 기록 됩니다.", pendingIntent);
 				NotificationManager nm = (NotificationManager)getContext().getSystemService(Context.NOTIFICATION_SERVICE);
 		    	nm.notify(ViewMain.NOTI_ID, notification);
 				

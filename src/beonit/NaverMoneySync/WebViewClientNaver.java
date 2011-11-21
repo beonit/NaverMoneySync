@@ -96,7 +96,7 @@ public class WebViewClientNaver extends WebViewClient {
 	
 	final class MyJavaScriptInterface {
 	    public void showHTML(String html) {
-	        if( html.contains("오류") ){
+	        if( html.contains("오류") && mProgressLoginDialog != null ){
 	        	mProgressLoginDialog.dismiss();
 	        	mProgressLoginDialog = null;
 	        }
