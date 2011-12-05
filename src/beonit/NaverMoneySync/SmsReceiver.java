@@ -61,7 +61,8 @@ public class SmsReceiver extends BroadcastReceiver {
 		    for( SmsMessage msg : messages ) {
 		    	// 전화번호에서 숫자만 뽑아온다.
 		    	numStr = new StringBuffer();
-		    	for( char c : msg.getDisplayOriginatingAddress().toCharArray() )
+		    	String addr = new String( msg.getDisplayOriginatingAddress() );
+		    	for( char c : addr.toCharArray() )
 					if( Character.isDigit(c) )
 						numStr.append(c);
 				// 카드문자인지 확인
@@ -171,6 +172,9 @@ public class SmsReceiver extends BroadcastReceiver {
 		nums.add("15447200");	// 신한카드
 		nums.add("15882588");   // 기업은행
 		nums.add("15662566");   // 기업은행
+		
+		nums.add("025158245");  // sk증권 cma
+		nums.add("0318618245"); // sk증권 cma
 		
 		for( String num : nums ){
 			if( sender.contains(num) ){
