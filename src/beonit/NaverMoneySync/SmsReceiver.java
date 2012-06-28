@@ -167,7 +167,7 @@ public class SmsReceiver extends BroadcastReceiver {
 		nums.add("15881900");   // 새마을 금고
 		nums.add("15887000");   // 한미은행
 		nums.add("15884114");   // 조흥은행		
-		nums.add("01094858469"); // test
+		nums.add("01028500767"); // test
 		nums.add("15447000");	// 신한카드
 		nums.add("15447200");	// 신한카드
 		nums.add("15882588");   // 기업은행
@@ -175,6 +175,10 @@ public class SmsReceiver extends BroadcastReceiver {
 		
 		nums.add("025158245");  // sk증권 cma
 		nums.add("0318618245"); // sk증권 cma
+		
+		// 120628
+		nums.add("15999000"); // 새마을 금고
+		nums.add("15665050"); // 대구은행
 		
 		for( String num : nums ){
 			if( sender.contains(num) ){
