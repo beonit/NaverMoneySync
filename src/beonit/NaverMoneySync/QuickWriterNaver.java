@@ -49,7 +49,8 @@ public class QuickWriterNaver extends QuickWriter implements IQuickWriter {
     			view.loadUrl("javascript:window.HTMLOUT.showHTML('' + document.body.getElementsByTagName('span')[3].innerHTML);");
     			sendProgressNotify("로그인 중");
     		}
-    		else if( url.contains("http://static.nid.naver.com/login/sso/finalize.nhn") ){
+    		else if( writeState == WRITE_LOGIN_ATTEMPT 
+    				&& url.contains("http://static.nid.naver.com/login/sso/finalize.nhn") ){
     			Log.v("beonit", "login... success");
     			writeState = WRITE_LOGIN_SUCCESS;
     			sendProgressNotify("로그인 로그인 완료");
@@ -62,27 +63,39 @@ public class QuickWriterNaver extends QuickWriter implements IQuickWriter {
 	    		writeState = WRITE_WRITING;
 	    		sendProgressNotify("가계부에 쓰기");
     		}
-    		else if( url.equals("http://moneybook.naver.com/m/smry.nhn")){
-    			Log.v("beonit", "write finish");
-    			sendSuccess();
-    			view.destroy();
-    			view = null;
-    			writeState = WRITE_SUCCESS;
-    			sendProgressNotify("쓰기 완료");
-    		}
     		else if( url.equals("http://moneybook.naver.com/m/mbookUser.nhn")){
     			view.destroy();
     			view = null;
     			sendFail("가계부 약관동의 안됨");
     			writeState = WRITE_FAIL_REGISTER;
     		}
-    		else{
+    		else if( writeState == WRITE_SUCCESS ){
+    			Log.v("beonit", "write finish - for debug");
+    		}
+    		else
+    		{
     			Log.e("boenit", "fail : " + url);
     			view.destroy();
     			view = null;
     			sendFail("원인을 모름");
     			writeState = WRITE_FAIL;
     		}
+    	}
+    	
+    	// write 성공시 302 Moved Temporarily 
+    	@Override
+    	public boolean shouldOverrideUrlLoading(WebView view, String url)
+    	{
+    		if( writeState == WRITE_WRITING ) // url 체크도 필요하려나?
+    		{
+    			Log.v("beonit", "write finish");
+    			sendSuccess();
+    			view.destroy();
+    			view = null;
+    			writeState = WRITE_SUCCESS;
+    			sendProgressNotify("쓰기 완료");    			
+    		}
+    		return true;
     	}
     }
 	
