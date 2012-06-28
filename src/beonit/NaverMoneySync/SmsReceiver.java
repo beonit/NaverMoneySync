@@ -179,6 +179,7 @@ public class SmsReceiver extends BroadcastReceiver {
 		// 120628
 		nums.add("15999000"); // 새마을 금고
 		nums.add("15665050"); // 대구은행
+		nums.add("15995000"); // 우리은행 입출금 문자
 		
 		for( String num : nums ){
 			if( sender.contains(num) ){
