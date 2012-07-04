@@ -61,7 +61,13 @@ public class SmsReceiver extends BroadcastReceiver {
 		    for( SmsMessage msg : messages ) {
 		    	// 전화번호에서 숫자만 뽑아온다.
 		    	numStr = new StringBuffer();
-		    	String addr = new String( msg.getDisplayOriginatingAddress() );
+		    	String displayOriginatingAddress = msg.getDisplayOriginatingAddress();
+		    	if (displayOriginatingAddress == null)
+		    	{
+		    		// There is no caller id. In this case, we don't try to parse the message anymore.
+		    		continue;
+		    	}
+		    	String addr = new String(displayOriginatingAddress);
 		    	for( char c : addr.toCharArray() )
 					if( Character.isDigit(c) )
 						numStr.append(c);
