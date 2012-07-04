@@ -65,13 +65,11 @@ public class ViewMain extends TabActivity implements OnTabChangeListener {
         		);
         mTabHost.setOnTabChangedListener(this);
         
+        float scaledDensity = this.getResources().getDisplayMetrics().scaledDensity;
         for ( int tab = 0; tab < mTabHost.getTabWidget().getChildCount(); ++tab )
         {
-        	mTabHost.getTabWidget().getChildAt(tab).getLayoutParams().height = 45;
+        	mTabHost.getTabWidget().getChildAt(tab).getLayoutParams().height = (int) (28 * scaledDensity);
         }	
-        
-//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND,
-//                WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
         
         // rewrite setup
         SharedPreferences prefs = getSharedPreferences("NaverMoneySync", Context.MODE_PRIVATE);
